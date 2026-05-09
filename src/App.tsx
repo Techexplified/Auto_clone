@@ -1,7 +1,8 @@
 function App() {
   return (
-    <div>
-      <h1>Auto Clone Power-Up</h1>
+    <div style={{ padding: 20 }}>
+      <h1>Auto Clone</h1>
+      <button>Clone Board</button>
     </div>
   );
 }
