@@ -1,4 +1,4 @@
-import { useState,listOptions } from "react";
+import { useState } from "react";
 
 import Header from "./components/Header";
 import SelectField from "./components/SelectField";
@@ -10,6 +10,7 @@ import {
   repeatOptions,
   durationOptions,
   positionOptions,
+  listOptions,
 } from "./data/options";
 
 function App() {
