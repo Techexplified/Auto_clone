@@ -9,8 +9,8 @@ window.TrelloPowerUp.initialize({
     return [
       {
         icon: {
-          dark: window.location.origin + "/logo.png",
-          light: window.location.origin + "/logo.png",
+          dark: window.location.origin + "/logo-white.png",
+          light: window.location.origin + "/logo-black.png",
         },
         text: "Auto Clone",
         callback: function (t: any) {
@@ -26,7 +26,7 @@ window.TrelloPowerUp.initialize({
   "list-actions": function () {
     return [
       {
-        icon: window.location.origin + "/logo.png",
+        icon: window.location.origin + "/logo-white.png",
         text: "Auto Clone",
         callback: function (t: any) {
           return t.popup({

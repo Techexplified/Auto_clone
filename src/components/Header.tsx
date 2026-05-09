@@ -9,7 +9,7 @@ function Header() {
       </button>
 
       <div className="flex items-center gap-2">
-        <img src="/logo.png" alt="Auto Clone Logo" className="w-6 h-6 rounded-md" />
+        <img src="/logo-white.png" alt="Auto Clone Logo" className="w-6 h-6" />
         <h1 className="text-sm font-semibold">
           Auto Clone
         </h1>
