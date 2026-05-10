@@ -55,7 +55,7 @@ window.TrelloPowerUp.initialize({
     ];
   },
 
-  "card-back-section": function (t: any, options: any) {
+  "card-back-section": function (t: any, _options: any) {
     return {
       title: "Auto Clone Settings",
       icon: window.location.origin + "/logo-white.png",

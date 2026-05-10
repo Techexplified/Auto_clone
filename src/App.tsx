@@ -3,8 +3,6 @@ import { useState } from "react";
 import Header from "./components/Header";
 import SelectField from "./components/SelectField";
 import InputField from "./components/InputField";
-import PrimaryButton from "./components/PrimaryButton";
-import CardPreview from "./components/CardPreview";
 
 import {
   repeatOptions,
