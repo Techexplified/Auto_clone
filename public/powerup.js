@@ -28,4 +28,19 @@ window.TrelloPowerUp.initialize({
       },
     ];
   },
+
+  "list-actions": function () {
+    return [
+      {
+        text: "Auto Clone",
+        callback: function (t) {
+          return t.popup({
+            title: "Auto Clone",
+            url: "/",
+            height: 700,
+          });
+        },
+      },
+    ];
+  },
 });

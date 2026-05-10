@@ -23,6 +23,22 @@ window.TrelloPowerUp.initialize({
       },
     ];
   },
+  "card-buttons": function () {
+    return [
+      {
+        icon: window.location.origin + "/logo-white.png",
+        text: "Auto Clone",
+        callback: function (t: any) {
+          return t.popup({
+            title: "Auto Clone",
+            url: window.location.origin,
+            height: 500,
+          });
+        },
+      },
+    ];
+  },
+
   "list-actions": function () {
     return [
       {
