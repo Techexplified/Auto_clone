@@ -18,16 +18,16 @@ function SelectField({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="mb-4 relative">
+    <div className="mb-3 relative">
 
-      <label className="text-xs text-gray-400 mb-1 block">
+      <label className="text-[11px] text-gray-400 mb-1 block">
         {label}
       </label>
 
       {/* Trigger */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-full bg-[#22272B] border border-[#3B444C] rounded-lg px-3 py-2 flex items-center justify-between text-sm hover:border-[#579DFF] transition"
+        className="w-full bg-[#22272B] border border-[#3B444C] rounded-md px-3 py-1.5 flex items-center justify-between text-[13px] hover:border-[#579DFF] transition"
       >
 
         {value}
