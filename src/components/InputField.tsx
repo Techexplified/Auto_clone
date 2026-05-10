@@ -8,17 +8,17 @@ function InputField({
   type,
 }: Props) {
   return (
-    <div className="mb-3">
+    <div className="mb-4">
 
-      <label className="text-[11px] text-gray-400 mb-1 block">
+      <label className="text-[12px] font-semibold text-[#9FADBC] mb-1.5 block">
         {label}
       </label>
 
-      <div className="bg-[#22272B] border border-[#3B444C] rounded-md px-3 py-1.5 hover:border-[#579DFF] transition">
+      <div className="bg-[#22272B] border border-[#3B444C] rounded-[3px] px-3 py-2 hover:border-[#579DFF] transition focus-within:border-[#579DFF] focus-within:ring-1 focus-within:ring-[#579DFF]">
 
         <input
           type={type}
-          className="w-full bg-transparent text-[13px] text-white outline-none"
+          className="w-full bg-transparent text-[14px] text-[#B6C2CF] outline-none placeholder-[#758195]"
         />
 
       </div>
