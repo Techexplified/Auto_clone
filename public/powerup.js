@@ -2,16 +2,12 @@ window.TrelloPowerUp.initialize({
   "board-buttons": function () {
     return [
       {
-        icon: {
-          dark: "/logo-white.png",
-          light: "/logo-black.png",
-        },
         text: "Auto Clone",
         callback: function (t) {
           return t.popup({
-            title: " ",
+            title: "Auto Clone",
             url: "/",
-            height: 480,
+            height: 540,
           });
         },
       },
@@ -21,13 +17,12 @@ window.TrelloPowerUp.initialize({
   "card-buttons": function () {
     return [
       {
-        icon: "/logo-white.png",
         text: "Auto Clone",
         callback: function (t) {
           return t.popup({
-            title: " ",
+            title: "Auto Clone",
             url: "/",
-            height: 480,
+            height: 540,
           });
         },
       },
@@ -37,20 +32,19 @@ window.TrelloPowerUp.initialize({
   "list-actions": function () {
     return [
       {
-        icon: "/logo-white.png",
         text: "Auto Clone",
         callback: function (t) {
           return t.popup({
-            title: " ",
+            title: "Auto Clone",
             url: "/",
-            height: 480,
+            height: 540,
           });
         },
       },
     ];
   },
 
-  "card-back-section": function (t, _options) {
+  "card-back-section": function (t, options) {
     return {
       title: "Auto Clone Settings",
       icon: "/logo-white.png",
