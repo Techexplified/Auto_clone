@@ -22,7 +22,7 @@ function App() {
   const [list, setList] = useState("To Do");
 
   return (
-    <div className="p-5 text-white max-w-[400px] mx-auto">
+    <div className="p-3 text-white w-[340px]">
 
       <Header />
 
