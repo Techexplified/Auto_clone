@@ -54,6 +54,18 @@ window.TrelloPowerUp.initialize({
       },
     ];
   },
+
+  "card-back-section": function (t: any, options: any) {
+    return {
+      title: "Auto Clone Settings",
+      icon: window.location.origin + "/logo-white.png",
+      content: {
+        type: "iframe",
+        url: t.signUrl(window.location.origin),
+        height: 500,
+      },
+    };
+  },
 });
 
 export {};
