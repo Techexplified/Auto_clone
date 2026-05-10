@@ -22,23 +22,23 @@ function App() {
   const [list, setList] = useState("To Do");
 
   return (
-    <div className="p-3 text-[#B6C2CF] w-[340px]">
+    <div className="p-3 text-[#B6C2CF] w-full max-w-[300px] mx-auto overflow-hidden">
 
       <Header />
 
       {/* Select a Card (Search style) */}
       <div className="mb-4">
-        <label className="text-[12px] font-semibold text-[#9FADBC] mb-1.5 block">
+        <label className="text-[12px] font-semibold text-[#9FADBC] mb-1 block">
           Select a card
         </label>
         <div className="relative">
           <input
             type="text"
             placeholder="Search"
-            className="w-full bg-[#22272B] border border-[#3B444C] rounded-[3px] px-3 py-2 text-[14px] text-[#B6C2CF] placeholder-[#758195] outline-none hover:border-[#579DFF] transition"
+            className="w-full bg-[#22272B] border border-[#3B444C] rounded-[3px] px-3 py-1.5 text-[14px] text-[#B6C2CF] placeholder-[#758195] outline-none hover:border-[#579DFF] focus:border-[#579DFF] transition"
           />
-          <div className="absolute right-3 top-2.5 text-[#9FADBC]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <div className="absolute right-3 top-2 text-[#9FADBC]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@ function App() {
         type="date"
       />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         <SelectField
           label="Expiry"
           value={duration}
@@ -83,9 +83,9 @@ function App() {
         onChange={setList}
       />
 
-      <div className="flex justify-end mt-2">
+      <div className="flex justify-end mt-4">
         <button
-          className="bg-[#282E33] hover:bg-[#3B444C] border border-[#3B444C] text-[#B6C2CF] text-[13px] font-medium px-6 py-2 rounded-[3px] transition"
+          className="bg-[#282E33] hover:bg-[#3B444C] border border-[#3B444C] text-[#B6C2CF] text-[13px] font-medium px-5 py-1.5 rounded-[3px] transition"
         >
           Save
         </button>

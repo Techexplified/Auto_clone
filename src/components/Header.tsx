@@ -2,18 +2,18 @@ import { ChevronLeft, User } from "lucide-react";
 
 function Header() {
   return (
-    <div className="flex items-center justify-between mb-4 px-1">
+    <div className="flex items-center justify-between mb-4 px-0">
 
-      <button className="text-[#9FADBC] hover:text-white transition p-1 rounded-md hover:bg-[#A6C5E229]">
-        <ChevronLeft size={18} />
+      <button className="text-[#9FADBC] hover:text-white transition border-none outline-none bg-transparent cursor-pointer p-0">
+        <ChevronLeft size={20} />
       </button>
 
-      <h1 className="text-[14px] font-semibold text-[#B6C2CF]">
+      <h1 className="text-[14px] font-medium text-[#B6C2CF] flex-1 text-center">
         Auto Clone
       </h1>
 
-      <button className="text-[#9FADBC] hover:text-white transition p-1 rounded-md hover:bg-[#A6C5E229]">
-        <User size={18} />
+      <button className="text-[#9FADBC] hover:text-white transition border-none outline-none bg-transparent cursor-pointer p-0">
+        <User size={20} />
       </button>
 
     </div>
