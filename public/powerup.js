@@ -4,10 +4,11 @@ window.TrelloPowerUp.initialize({
       {
         text: "Auto Clone",
         callback: function (t) {
-          return t.popup({
+          return t.modal({
             title: "Auto Clone",
             url: "/",
             height: 700,
+            accentColor: "#111827",
           });
         },
       },
@@ -19,10 +20,11 @@ window.TrelloPowerUp.initialize({
       {
         text: "Auto Clone",
         callback: function (t) {
-          return t.popup({
+          return t.modal({
             title: "Auto Clone",
             url: "/",
             height: 700,
+            accentColor: "#111827",
           });
         },
       },
@@ -34,10 +36,11 @@ window.TrelloPowerUp.initialize({
       {
         text: "Auto Clone",
         callback: function (t) {
-          return t.popup({
+          return t.modal({
             title: "Auto Clone",
             url: "/",
             height: 700,
+            accentColor: "#111827",
           });
         },
       },
