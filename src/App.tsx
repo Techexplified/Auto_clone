@@ -108,12 +108,49 @@ function App() {
           boardLists = Array.isArray(boardLists) && boardLists.length ? boardLists : l;
           boardCards = Array.isArray(boardCards) && boardCards.length ? boardCards : c;
         }
+
+        // Strong fallback: Trello REST API (needs one-time auth for private boards).
+        if (!memberData || !Array.isArray(boardLists) || boardLists.length === 0 || !Array.isArray(boardCards) || boardCards.length === 0) {
+          try {
+            const restApi = await t.getRestApi();
+            const authorized = await restApi.isAuthorized();
+            if (!authorized) {
+              await restApi.authorize({ scope: "read,write", expiration: "never" });
+            }
+
+            const ctx = await t.getContext().catch(() => ({}));
+            const boardId = ctx?.board;
+
+            const [me, listsResp, cardsResp] = await Promise.all([
+              restApi.get("members/me", { fields: "fullName,username,avatarUrl" }).catch(() => null),
+              boardId
+                ? restApi.get(`boards/${boardId}/lists`, { fields: "id,name", filter: "open" }).catch(() => [])
+                : Promise.resolve([]),
+              boardId
+                ? restApi.get(`boards/${boardId}/cards`, {
+                    fields: "id,name,desc,idList,idMembers,idLabels",
+                    filter: "open",
+                  }).catch(() => [])
+                : Promise.resolve([]),
+            ]);
+
+            memberData = memberData ?? me;
+            if ((!Array.isArray(boardLists) || boardLists.length === 0) && Array.isArray(listsResp)) {
+              boardLists = listsResp;
+            }
+            if ((!Array.isArray(boardCards) || boardCards.length === 0) && Array.isArray(cardsResp)) {
+              boardCards = cardsResp;
+            }
+          } catch {
+            // keep existing fallback values
+          }
+        }
         if (cancelled) return;
 
         setMember({
           fullName: memberData?.fullName ?? memberData?.name ?? undefined,
           username: memberData?.username ?? memberData?.membername ?? undefined,
-          avatarUrl: memberData?.avatarUrl ?? undefined,
+          avatarUrl: memberData?.avatarUrl ?? memberData?.avatarURL ?? undefined,
         });
 
         const normalizedLists = (boardLists ?? []).map((l: any) => ({
