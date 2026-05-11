@@ -28,6 +28,27 @@ function App() {
 
   const [list, setList] = useState("To Do");
 
+  // Make the popup height fit content (avoids scrolling to "Save")
+  useEffect(() => {
+    if (!t?.render || !t?.sizeTo) return;
+    try {
+      t.render(() => {
+        t.sizeTo("#root").catch?.(() => {});
+      });
+    } catch {
+      // ignore
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (!t?.sizeTo) return;
+    // re-size when dropdown opens/closes
+    const id = window.requestAnimationFrame(() => {
+      t.sizeTo("#root").catch?.(() => {});
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [t, userMenuOpen]);
+
   useEffect(() => {
     let cancelled = false;
     let attempt = 0;
@@ -68,8 +89,34 @@ function App() {
     async function loadMember() {
       try {
         if (!t?.member) return;
-        const m = await t.member("fullName", "username", "avatarUrl");
-        if (!cancelled) setMember(m ?? null);
+
+        // Prefer broad fetch, then fall back to selective fields.
+        let m: any = null;
+        try {
+          m = await t.member("all");
+        } catch {
+          m = await t.member("id", "fullName", "username", "avatarUrl");
+        }
+
+        // Some Trello contexts omit `username`; derive from other known keys if present.
+        const normalized = m
+          ? {
+              fullName: m.fullName ?? m.name ?? undefined,
+              username:
+                m.username ??
+                m.userName ??
+                m.membername ??
+                m.memberName ??
+                undefined,
+              avatarUrl:
+                m.avatarUrl ??
+                m.avatarURL ??
+                m.avatar ??
+                undefined,
+            }
+          : null;
+
+        if (!cancelled) setMember(normalized);
       } catch {
         if (!cancelled) setMember(null);
       }
