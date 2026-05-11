@@ -68,7 +68,8 @@ function App() {
     async function load() {
       setLoading(true);
       try {
-        // Read context from separate arg + fallback
+        // Read context from URL query param (most reliable), then t.arg, then infer
+        const urlCtx = new URLSearchParams(window.location.search).get("ctx");
         const ctxArg = await t.arg("context").catch(() => null);
         const pf = (await t.arg("prefetch").catch(() => null)) ?? {};
         const sp = (await t.get("board", "shared", "autoClonePrefetch").catch(() => null)) ?? {};
@@ -79,9 +80,11 @@ function App() {
         const curCard = pf.currentCard ?? sp.currentCard ?? null;
         const curList = pf.currentList ?? sp.currentList ?? null;
 
-        // Detect context: explicit arg > infer from data
+        // Detect context: URL param > arg > infer from data
         let context: Context = "board";
-        if (ctxArg === "card" || ctxArg === "list" || ctxArg === "board") {
+        if (urlCtx === "card" || urlCtx === "list" || urlCtx === "board") {
+          context = urlCtx;
+        } else if (ctxArg === "card" || ctxArg === "list" || ctxArg === "board") {
           context = ctxArg;
         } else if (curCard?.id && curCard?.name) {
           context = "card";

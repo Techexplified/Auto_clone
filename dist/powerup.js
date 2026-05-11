@@ -4,6 +4,7 @@ var safe = function (promise, fallback) {
 
 /**
  * context: "board" | "list" | "card"
+ * Pass context via URL query param for reliable detection in the React app.
  */
 function openPopup(t, context) {
   return Promise.all([
@@ -31,7 +32,7 @@ function openPopup(t, context) {
 
     return t.popup({
       title: "Auto Clone",
-      url: "/",
+      url: "/?ctx=" + context,
       height: 540,
       accentColor: "#2b2c2f",
       args: {
