@@ -90,11 +90,22 @@ function App() {
 
     async function loadContextData() {
       try {
-        const [memberData, boardLists, boardCards] = await Promise.all([
-          t.member("all"),
-          t.lists("id", "name"),
-          t.cards("id", "name", "desc", "idList", "idMembers", "idLabels"),
-        ]);
+        const prefetched = (await t.arg("prefetch")) ?? {};
+        let memberData = prefetched.member ?? null;
+        let boardLists = prefetched.lists ?? [];
+        let boardCards = prefetched.cards ?? [];
+
+        // Fallbacks if args are missing.
+        if (!memberData || !Array.isArray(boardLists) || !Array.isArray(boardCards)) {
+          const [m, l, c] = await Promise.all([
+            t.member("all").catch(() => null),
+            t.lists("id", "name").catch(() => []),
+            t.cards("id", "name", "desc", "idList", "idMembers", "idLabels").catch(() => []),
+          ]);
+          memberData = memberData ?? m;
+          boardLists = Array.isArray(boardLists) && boardLists.length ? boardLists : l;
+          boardCards = Array.isArray(boardCards) && boardCards.length ? boardCards : c;
+        }
         if (cancelled) return;
 
         setMember({
@@ -141,10 +152,11 @@ function App() {
       const target = e.target;
       if (!(target instanceof Node)) return;
       if (userMenuRef.current && !userMenuRef.current.contains(target)) setUserMenuOpen(false);
+      if (cardMenuOpen) setCardMenuOpen(false);
     }
     document.addEventListener("mousedown", onDocMouseDown);
     return () => document.removeEventListener("mousedown", onDocMouseDown);
-  }, []);
+  }, [cardMenuOpen]);
 
   const selectedCard = useMemo(
     () => cards.find((c) => c.id === selectedCardId) ?? null,
