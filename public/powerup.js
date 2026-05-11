@@ -1,13 +1,29 @@
-function openAutoClonePopup(t) {
-  const safe = (promise, fallback) => promise.catch(() => fallback);
+var safe = function (promise, fallback) {
+  return promise.catch(function () { return fallback; });
+};
+
+/**
+ * context: "board" | "list" | "card"
+ * board  → navbar button  → user must pick list then card
+ * list   → list-actions   → list known, user picks card
+ * card   → card-button    → both known, show settings only
+ */
+function openPopup(t, context) {
   return Promise.all([
     safe(t.member("all"), null),
     safe(t.lists("id", "name"), []),
     safe(t.cards("id", "name", "desc", "idList", "idMembers", "idLabels"), []),
     safe(t.card("id", "name", "desc", "idList", "idMembers", "idLabels"), null),
     safe(t.list("id", "name"), null),
-  ]).then(function ([member, lists, cards, currentCard, currentList]) {
-    const payload = {
+  ]).then(function (results) {
+    var member = results[0];
+    var lists = results[1];
+    var cards = results[2];
+    var currentCard = results[3];
+    var currentList = results[4];
+
+    var payload = {
+      context: context,
       member: member,
       lists: lists,
       cards: cards,
@@ -15,7 +31,6 @@ function openAutoClonePopup(t) {
       currentList: currentList,
     };
 
-    // Backup cache for contexts where popup args may be unavailable.
     safe(t.set("board", "shared", "autoClonePrefetch", payload), null);
 
     return t.popup({
@@ -23,44 +38,30 @@ function openAutoClonePopup(t) {
       url: "/",
       height: 540,
       accentColor: "#2b2c2f",
-      args: {
-        prefetch: payload,
-      },
+      args: { prefetch: payload },
     });
   });
 }
 
 window.TrelloPowerUp.initialize({
   "board-buttons": function () {
-    return [
-      {
-        text: "Auto Clone",
-        callback: function (t) {
-          return openAutoClonePopup(t);
-        },
-      },
-    ];
+    return [{
+      text: "Auto Clone",
+      callback: function (t) { return openPopup(t, "board"); },
+    }];
   },
 
   "card-buttons": function () {
-    return [
-      {
-        text: "Auto Clone",
-        callback: function (t) {
-          return openAutoClonePopup(t);
-        },
-      },
-    ];
+    return [{
+      text: "Auto Clone",
+      callback: function (t) { return openPopup(t, "card"); },
+    }];
   },
 
   "list-actions": function () {
-    return [
-      {
-        text: "Auto Clone",
-        callback: function (t) {
-          return openAutoClonePopup(t);
-        },
-      },
-    ];
+    return [{
+      text: "Auto Clone",
+      callback: function (t) { return openPopup(t, "list"); },
+    }];
   },
 });
