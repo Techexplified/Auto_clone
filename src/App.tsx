@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import Header from "./components/Header";
 import SelectField from "./components/SelectField";
 import InputField from "./components/InputField";
 
@@ -22,9 +21,7 @@ function App() {
   const [list, setList] = useState("To Do");
 
   return (
-    <div className="p-3 text-[#B6C2CF] w-full max-w-[300px] mx-auto overflow-hidden">
-
-      <Header />
+    <div className="p-3 text-[#B6C2CF] w-full">
 
       {/* Select a Card (Search style) */}
       <div className="mb-4">
