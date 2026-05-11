@@ -8,6 +8,7 @@ window.TrelloPowerUp.initialize({
             title: "Auto Clone",
             url: "/",
             height: 540,
+            accentColor: "#1D2125",
           });
         },
       },
@@ -23,6 +24,7 @@ window.TrelloPowerUp.initialize({
             title: "Auto Clone",
             url: "/",
             height: 540,
+            accentColor: "#1D2125",
           });
         },
       },
@@ -38,6 +40,7 @@ window.TrelloPowerUp.initialize({
             title: "Auto Clone",
             url: "/",
             height: 540,
+            accentColor: "#1D2125",
           });
         },
       },
