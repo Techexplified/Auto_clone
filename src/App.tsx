@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { X } from "lucide-react";
 
 import SelectField from "./components/SelectField";
 import InputField from "./components/InputField";
@@ -12,7 +11,13 @@ import {
 } from "./data/options";
 
 function App() {
-  const t = useMemo(() => window.TrelloPowerUp?.iframe?.(), []);
+  const t = useMemo(() => {
+    try {
+      return window.TrelloPowerUp?.iframe?.() ?? null;
+    } catch {
+      return null;
+    }
+  }, []);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [member, setMember] = useState<{
@@ -62,17 +67,7 @@ function App() {
   return (
     <div className="p-3 text-[#B6C2CF] w-full">
       {/* Top bar (in-app) */}
-      <div className="flex items-center justify-between gap-2 mb-3">
-        <button
-          type="button"
-          onClick={() => t?.closePopup?.()}
-          className="h-7 w-7 ml-1 rounded-[6px] border border-[#3B444C] bg-[#22272B] hover:bg-[#2C333A] transition grid place-items-center"
-          aria-label="Close"
-          title="Close"
-        >
-          <X size={16} className="text-[#9FADBC]" />
-        </button>
-
+      <div className="flex items-center justify-end gap-2 mb-3">
         <div className="relative" ref={userMenuRef}>
           <button
             type="button"
