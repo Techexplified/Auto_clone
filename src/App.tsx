@@ -86,6 +86,41 @@ function App() {
     if (!t) return;
     let cancelled = false;
 
+    async function resolveBoardId() {
+      const ctx = await t.getContext().catch(() => ({}));
+      if (ctx?.board) return ctx.board as string;
+      const board = await t.board("id").catch(() => null);
+      return board?.id ?? "";
+    }
+
+    async function fetchRestBoardData() {
+      const restApi = await t.getRestApi();
+      const authorized = await restApi.isAuthorized();
+      if (!authorized) {
+        await restApi.authorize({ scope: "read,write", expiration: "never" });
+      }
+
+      const boardId = await resolveBoardId();
+      const [me, listsResp, cardsResp] = await Promise.all([
+        restApi.get("members/me", { fields: "fullName,username,avatarUrl" }).catch(() => null),
+        boardId
+          ? restApi.get(`boards/${boardId}/lists`, { fields: "id,name", filter: "open" }).catch(() => [])
+          : Promise.resolve([]),
+        boardId
+          ? restApi.get(`boards/${boardId}/cards`, {
+              fields: "id,name,desc,idList,idMembers,idLabels",
+              filter: "open",
+            }).catch(() => [])
+          : Promise.resolve([]),
+      ]);
+
+      return {
+        me,
+        listsResp,
+        cardsResp,
+      };
+    }
+
     async function loadContextData() {
       try {
         const prefetched = (await t.arg("prefetch").catch(() => null)) ?? {};
@@ -110,31 +145,21 @@ function App() {
         }
 
         // Strong fallback: Trello REST API (needs one-time auth for private boards).
-        if (!memberData || !Array.isArray(boardLists) || boardLists.length === 0 || !Array.isArray(boardCards) || boardCards.length === 0) {
+        if (
+          !memberData?.username ||
+          !memberData?.fullName ||
+          !Array.isArray(boardLists) ||
+          boardLists.length === 0 ||
+          !Array.isArray(boardCards) ||
+          boardCards.length === 0
+        ) {
           try {
-            const restApi = await t.getRestApi();
-            const authorized = await restApi.isAuthorized();
-            if (!authorized) {
-              await restApi.authorize({ scope: "read,write", expiration: "never" });
-            }
+            const { me, listsResp, cardsResp } = await fetchRestBoardData();
 
-            const ctx = await t.getContext().catch(() => ({}));
-            const boardId = ctx?.board;
-
-            const [me, listsResp, cardsResp] = await Promise.all([
-              restApi.get("members/me", { fields: "fullName,username,avatarUrl" }).catch(() => null),
-              boardId
-                ? restApi.get(`boards/${boardId}/lists`, { fields: "id,name", filter: "open" }).catch(() => [])
-                : Promise.resolve([]),
-              boardId
-                ? restApi.get(`boards/${boardId}/cards`, {
-                    fields: "id,name,desc,idList,idMembers,idLabels",
-                    filter: "open",
-                  }).catch(() => [])
-                : Promise.resolve([]),
-            ]);
-
-            memberData = memberData ?? me;
+            memberData = {
+              ...(memberData ?? {}),
+              ...(me ?? {}),
+            };
             if ((!Array.isArray(boardLists) || boardLists.length === 0) && Array.isArray(listsResp)) {
               boardLists = listsResp;
             }
@@ -276,11 +301,17 @@ function App() {
 
     setSaving(true);
     try {
+      const restApi = await t.getRestApi();
+      const authorized = await restApi.isAuthorized();
+      if (!authorized) {
+        await restApi.authorize({ scope: "read,write", expiration: "never" });
+      }
+
       const count = getOccurrenceCount();
       const requests: Promise<any>[] = [];
       for (let i = 0; i < count; i += 1) {
         requests.push(
-          t.post("cards", {
+          restApi.post("cards", {
             idList: targetList.id,
             name: selectedCard.name,
             desc: selectedCard.desc ?? "",
