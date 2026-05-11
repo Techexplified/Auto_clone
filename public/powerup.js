@@ -4,9 +4,6 @@ var safe = function (promise, fallback) {
 
 /**
  * context: "board" | "list" | "card"
- * board  → navbar button  → user must pick list then card
- * list   → list-actions   → list known, user picks card
- * card   → card-button    → both known, show settings only
  */
 function openPopup(t, context) {
   return Promise.all([
@@ -23,7 +20,6 @@ function openPopup(t, context) {
     var currentList = results[4];
 
     var payload = {
-      context: context,
       member: member,
       lists: lists,
       cards: cards,
@@ -38,7 +34,10 @@ function openPopup(t, context) {
       url: "/",
       height: 540,
       accentColor: "#2b2c2f",
-      args: { prefetch: payload },
+      args: {
+        context: context,
+        prefetch: payload,
+      },
     });
   });
 }
