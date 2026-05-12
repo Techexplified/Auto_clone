@@ -273,6 +273,7 @@ function App() {
       
       await persistRules(newRules);
       showToast(existingIdx >= 0 ? "✓ Rule updated!" : "✓ Rule created & first clone done!");
+      if (existingIdx >= 0 && t) t.closeModal().catch(() => t.closePopup().catch(() => {}));
     } catch (err: any) { showToast("✗ Failed: " + (err?.message || String(err))); } finally { setSaving(false); }
   }
 
@@ -475,8 +476,13 @@ function App() {
                 <SelectField label="List" value={lists.find(l => l.id === targetListId)?.name || "Select list"} options={lists} onChange={setTargetListId} />
               )}
 
-              <div className="flex justify-end mt-2">
-                <button type="button" onClick={onSave} disabled={saving} className="bg-[#2B2D31] hover:bg-[#35373C] border border-[#3B3D41] text-[#B6C2CF] text-[14px] font-medium px-6 py-2.5 rounded-xl transition disabled:opacity-50 min-w-[100px]">
+              <div className="flex justify-end gap-2 mt-4">
+                {rules.some(r => r.srcId === selectedCard?.id) && (
+                  <button type="button" onClick={() => { const r = rules.find(x => x.srcId === selectedCard?.id); if (r) { deleteRule(r.id); if(t) { t.closeModal().catch(() => t.closePopup().catch(() => {})); } } }} className="bg-transparent hover:bg-red-500/10 text-[#738496] hover:text-red-400 text-[14px] font-medium px-4 py-2.5 rounded-xl transition">
+                    Delete
+                  </button>
+                )}
+                <button type="button" onClick={onSave} disabled={saving} className="bg-[#579DFF] hover:bg-[#85B8FF] text-[#141518] text-[14px] font-medium px-6 py-2.5 rounded-xl transition disabled:opacity-50 min-w-[100px]">
                   {saving ? "Saving…" : "Save"}
                 </button>
               </div>
@@ -487,7 +493,7 @@ function App() {
 
       {view === "cardback" && (
         <div 
-          onClick={() => { if (t) t.popup({ title: 'Edit Auto Clone', url: './index.html?ctx=card&cardId=' + selectedCardId + '&edit=true', height: 400 }); }}
+          onClick={() => { if (t) t.modal({ title: 'Edit Auto Clone', url: './index.html?ctx=card&cardId=' + selectedCardId + '&edit=true', height: 450 }); }}
           className="flex items-center justify-between bg-[#22272b] border border-[#3B444C] rounded-lg p-3 cursor-pointer hover:bg-[#2C333A] transition"
         >
           <div>
