@@ -59,6 +59,7 @@ function App() {
   const [rules, setRules] = useState<CloneRule[]>([]);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [needsAuth, setNeedsAuth] = useState(false);
 
 
   useEffect(() => { let a = 0; const id = setInterval(() => { a++; try { const c = window.TrelloPowerUp?.iframe?.(); if (c) { setT(c); clearInterval(id); } } catch {} if (a >= 30) clearInterval(id); }, 120); return () => clearInterval(id); }, []);
@@ -105,12 +106,22 @@ function App() {
         }
         if (!mem?.username || !bLists?.length || !bCards?.length) {
           try {
-            const api = await t.getRestApi(); const ok = await api.isAuthorized();
-            if (!ok) await api.authorize({ scope: "read,write", expiration: "never" });
-            const c2 = await t.getContext().catch(() => ({})); const bid = c2?.board || (await t.board("id").catch(() => null))?.id || "";
+            const api = await t.getRestApi(); 
+            const ok = await api.isAuthorized();
+            if (!ok) {
+              setNeedsAuth(true);
+              setLoading(false);
+              return;
+            }
+            const c2 = await t.getContext().catch(() => ({})); 
+            const bid = c2?.board || (await t.board("id").catch(() => null))?.id || "";
             const [me, ls, cs] = await Promise.all([api.get("members/me", { fields: "fullName,username,avatarUrl" }).catch(() => null), bid ? api.get(`boards/${bid}/lists`, { fields: "id,name", filter: "open" }).catch(() => []) : [], bid ? api.get(`boards/${bid}/cards`, { fields: "id,name,desc,idList,idMembers,idLabels", filter: "open" }).catch(() => []) : []]);
-            mem = { ...(mem ?? {}), ...(me ?? {}) }; if (!bLists?.length && Array.isArray(ls)) bLists = ls; if (!bCards?.length && Array.isArray(cs)) bCards = cs;
-          } catch {}
+            mem = { ...(mem ?? {}), ...(me ?? {}) }; 
+            if (!bLists?.length && Array.isArray(ls)) bLists = ls; 
+            if (!bCards?.length && Array.isArray(cs)) bCards = cs;
+          } catch (err: any) {
+            setToast("API error: " + err?.message);
+          }
         }
         if (cancelled) return;
 
@@ -263,7 +274,22 @@ function App() {
         </div>
       )}
 
-      {view === "form" && (
+      {needsAuth ? (
+        <div className="flex flex-col items-center justify-center mt-10 p-4 text-center border border-[#3B444C] rounded-xl bg-[#22272b]">
+          <p className="text-[#B6C2CF] text-[14px] mb-4">Auto Clone needs permission to read your lists and cards to work correctly.</p>
+          <button type="button" onClick={async () => {
+            try {
+              const api = await t.getRestApi();
+              await api.authorize({ scope: "read,write", expiration: "never" });
+              window.location.reload();
+            } catch (err: any) {
+              setToast("Auth failed: " + err?.message);
+            }
+          }} className="bg-[#579DFF] text-[#141518] px-6 py-2 rounded-xl font-medium hover:bg-[#85B8FF] transition">
+            Authorize Trello
+          </button>
+        </div>
+      ) : view === "form" && (
         <div className="flex flex-col gap-4 pb-4">
           {loading ? <div className="flex items-center justify-center py-10 text-[13px] text-[#738496]">Loading board data…</div> : (
             <>
@@ -278,12 +304,15 @@ function App() {
 
               {/* BOARD context: Select a list first */}
               {ctx === "board" && (
-                <SelectField
-                  label="Select a list"
-                  value={lists.find((l) => l.id === selectedListId)?.name || "Select list"}
-                  options={lists.map((l) => l.name)}
-                  onChange={(name) => { const li = lists.find((l) => l.name === name); if (li) { setSelectedListId(li.id); setTargetListName(name); setSelectedCardId(""); setCardQuery(""); } }}
-                />
+                <>
+                  <SelectField
+                    label="Select a list"
+                    value={lists.find((l) => l.id === selectedListId)?.name || "Select list"}
+                    options={lists.map((l) => l.name)}
+                    onChange={(name) => { const li = lists.find((l) => l.name === name); if (li) { setSelectedListId(li.id); setTargetListName(name); setSelectedCardId(""); setCardQuery(""); } }}
+                  />
+                  <div className="text-[10px] text-red-400 mt-1">Debug Lists: {lists.length} | Context: {ctx}</div>
+                </>
               )}
 
               {/* LIST context: show which list (read-only info) */}
