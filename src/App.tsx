@@ -75,10 +75,11 @@ function App() {
     async function load() {
       setLoading(true);
       try {
-        // Read context from URL query param (most reliable), then t.arg, then infer
         const urlCtx = new URLSearchParams(window.location.search).get("ctx");
-        const ctxArg = typeof t.arg === "function" ? await t.arg("context").catch(() => null) : null;
-        const pf = (typeof t.arg === "function" ? await t.arg("prefetch").catch(() => null) : null) ?? {};
+        let ctxArg = null;
+        let pf: any = {};
+        try { if (typeof t.arg === "function") ctxArg = t.arg("context"); } catch {}
+        try { if (typeof t.arg === "function") pf = t.arg("prefetch") || {}; } catch {}
         
         let mem = pf.member ?? null;
         let bLists = pf.lists ?? [];
@@ -315,15 +316,15 @@ function App() {
           </button>
         </div>
       ) : view === "form" && (
-        <div className="flex flex-col gap-3 pb-3">
+        <div className="flex flex-col gap-2.5 pb-2">
           {loading ? <div className="flex items-center justify-center py-10 text-[13px] text-[#738496]">Loading board data…</div> : (
             <>
               {/* CARD context: show card info only, no selectors */}
               {ctx === "card" && selectedCard && (
-                <div className="bg-[#22272b] border border-[#3B444C] rounded-xl p-4">
-                  <div className="text-[11px] font-medium text-[#738496] uppercase tracking-widest mb-1.5">Cloning card</div>
-                  <div className="text-[15px] font-medium text-[#B6C2CF] truncate">{selectedCard.name}</div>
-                  <div className="text-[13px] text-[#8C9BAB] truncate mt-0.5">in {listNameById.get(selectedCard.idList) ?? "list"}</div>
+                <div className="bg-[#22272b] border border-[#3B444C] rounded-lg p-3">
+                  <div className="text-[11px] font-medium text-[#738496] uppercase tracking-widest mb-1">Cloning card</div>
+                  <div className="text-[14px] font-medium text-[#B6C2CF] truncate">{selectedCard.name}</div>
+                  <div className="text-[12px] text-[#8C9BAB] truncate">in {listNameById.get(selectedCard.idList) ?? "list"}</div>
                 </div>
               )}
 
