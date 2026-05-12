@@ -166,7 +166,15 @@ function App() {
           setSelectedListId(normLists[0].id);
           setTargetListName(normLists[0].name);
         }
-      } catch { if (!cancelled) { setLists([]); setCards([]); } } finally { if (!cancelled) setLoading(false); }
+      } catch (err: any) { 
+        if (!cancelled) { 
+          setDebugError(prev => prev + " | outerCatch: " + (err?.message || String(err)));
+          setLists([]); 
+          setCards([]); 
+        } 
+      } finally { 
+        if (!cancelled) setLoading(false); 
+      }
     }
     load();
     return () => { cancelled = true; };
@@ -250,9 +258,9 @@ function App() {
       </div>
 
       {view === "account" && (
-        <div className="mt-2">
-          <div className="flex items-center gap-3 bg-[#22272b] border border-[#3B444C] rounded-xl p-4">
-            <div className="h-12 w-12 rounded-full overflow-hidden border border-[#2C333A] bg-[#2C333A] grid place-items-center shrink-0">
+        <div className="mt-1">
+          <div className="flex items-center gap-2 bg-[#22272b] border border-[#3B444C] rounded-lg p-3">
+            <div className="h-10 w-10 rounded-full overflow-hidden border border-[#2C333A] bg-[#2C333A] grid place-items-center shrink-0">
               {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={20} className="text-[#8C9BAB]" />}
             </div>
             <div className="min-w-0">
@@ -264,13 +272,13 @@ function App() {
       )}
 
       {view === "rules" && (
-        <div className="mt-2">
-          <h2 className="text-[13px] font-medium text-[#8C9BAB] mb-3 px-1">Rules ({rules.length})</h2>
-          {rules.length === 0 ? <div className="text-[13px] text-[#738496] bg-[#22272b] border border-[#3B444C] rounded-xl p-6 text-center">No rules yet.</div> : (
-            <div className="flex flex-col gap-3 max-h-96 overflow-y-auto pr-1">
+        <div className="mt-1">
+          <h2 className="text-[12px] font-medium text-[#8C9BAB] mb-2 px-1">Rules ({rules.length})</h2>
+          {rules.length === 0 ? <div className="text-[12px] text-[#738496] bg-[#22272b] border border-[#3B444C] rounded-lg p-4 text-center">No rules yet.</div> : (
+            <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto pr-1">
               {rules.map((r) => (
-                <div key={r.id} className={`bg-[#22272b] border rounded-xl p-3.5 transition ${r.active ? "border-[#2C333A]" : "border-[#3B444C] opacity-50"}`}>
-                  <div className="flex items-start justify-between gap-3">
+                <div key={r.id} className={`bg-[#22272b] border rounded-lg p-2.5 transition ${r.active ? "border-[#2C333A]" : "border-[#3B444C] opacity-50"}`}>
+                  <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="text-[14px] font-medium text-[#B6C2CF] truncate">{r.srcName}</div>
                       <div className="text-[12px] text-[#8C9BAB] truncate mt-0.5">→ {r.listName}</div>
@@ -307,7 +315,7 @@ function App() {
           </button>
         </div>
       ) : view === "form" && (
-        <div className="flex flex-col gap-4 pb-4">
+        <div className="flex flex-col gap-3 pb-3">
           {loading ? <div className="flex items-center justify-center py-10 text-[13px] text-[#738496]">Loading board data…</div> : (
             <>
               {/* CARD context: show card info only, no selectors */}
@@ -372,18 +380,18 @@ function App() {
               <SelectField label="Repeats" value={repeat} options={repeatOptions} onChange={setRepeat} />
               
               <div>
-                <label className="text-[13px] text-[#8C9BAB] mb-1.5 block">At</label>
+                <label className="text-[12px] text-[#8C9BAB] mb-1 block">At</label>
                 <div className="relative">
-                  <input type="time" value={atTime} onChange={(e) => setAtTime(e.target.value)} className="w-full bg-[#22272b] border border-[#3B444C] rounded-xl px-4 py-3 text-[14px] text-[#B6C2CF] outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition [color-scheme:dark]" />
+                  <input type="time" value={atTime} onChange={(e) => setAtTime(e.target.value)} className="w-full bg-[#22272b] border border-[#3B444C] rounded-lg px-3 py-2 text-[13px] text-[#B6C2CF] outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition [color-scheme:dark]" />
                 </div>
               </div>
 
               {repeat === "Weekly" && (
                 <div>
-                  <label className="text-[13px] text-[#8C9BAB] mb-1.5 block">On</label>
+                  <label className="text-[12px] text-[#8C9BAB] mb-1 block">On</label>
                   <div className="relative">
-                    <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#738496] pointer-events-none" />
-                    <select value={weekday} onChange={(e) => setWeekday(e.target.value)} className="w-full bg-[#22272b] border border-[#3B444C] rounded-xl px-4 py-3 pl-11 text-[14px] text-[#B6C2CF] outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition appearance-none cursor-pointer">
+                    <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#738496] pointer-events-none" />
+                    <select value={weekday} onChange={(e) => setWeekday(e.target.value)} className="w-full bg-[#22272b] border border-[#3B444C] rounded-lg px-3 py-2 pl-9 text-[13px] text-[#B6C2CF] outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition appearance-none cursor-pointer">
                       {weekdayOptions.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   </div>
