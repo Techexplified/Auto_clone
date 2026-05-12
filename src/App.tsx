@@ -67,7 +67,7 @@ function App() {
 
   useEffect(() => { let a = 0; const id = setInterval(() => { a++; try { const c = window.TrelloPowerUp?.iframe?.({ appKey: TRELLO_APP_KEY, appName: 'Auto Clone' }); if (c) { setT(c); clearInterval(id); } } catch {} if (a >= 30) clearInterval(id); }, 120); return () => clearInterval(id); }, []);
   useEffect(() => { if (!t?.render || !t?.sizeTo) return; try { t.render(() => t.sizeTo("#root").catch(() => {})); } catch {} }, [t]);
-  useEffect(() => { if (!t?.sizeTo) return; const id = requestAnimationFrame(() => t.sizeTo("#root").catch(() => {})); return () => cancelAnimationFrame(id); }, [t, cardMenuOpen, view, cards.length, rules.length, selectedListId, ctx]);
+  useEffect(() => { if (!t?.sizeTo) return; const id = requestAnimationFrame(() => t.sizeTo("#root").catch(() => {})); return () => cancelAnimationFrame(id); }, [t, cardMenuOpen, view, cards.length, rules.length, selectedListId, ctx, repeat, weekday, expiry]);
 
   useEffect(() => {
     if (!t) return;
@@ -273,7 +273,7 @@ function App() {
       
       await persistRules(newRules);
       showToast(existingIdx >= 0 ? "✓ Rule updated!" : "✓ Rule created & first clone done!");
-      if (existingIdx >= 0 && t) t.closeModal().catch(() => t.closePopup().catch(() => {}));
+      if (existingIdx >= 0 && t) { setTimeout(() => t.closePopup().catch(() => {}), 300); }
     } catch (err: any) { showToast("✗ Failed: " + (err?.message || String(err))); } finally { setSaving(false); }
   }
 
@@ -478,7 +478,7 @@ function App() {
 
               <div className="flex justify-end gap-2 mt-4">
                 {rules.some(r => r.srcId === selectedCard?.id) && (
-                  <button type="button" onClick={() => { const r = rules.find(x => x.srcId === selectedCard?.id); if (r) { deleteRule(r.id); if(t) { t.closeModal().catch(() => t.closePopup().catch(() => {})); } } }} className="bg-transparent hover:bg-red-500/10 text-[#738496] hover:text-red-400 text-[14px] font-medium px-4 py-2.5 rounded-xl transition">
+                  <button type="button" onClick={async () => { const r = rules.find(x => x.srcId === selectedCard?.id); if (r) { setSaving(true); await deleteRule(r.id); if(t) { setTimeout(() => t.closePopup().catch(() => {}), 300); } } }} className="bg-transparent hover:bg-red-500/10 text-[#738496] hover:text-red-400 text-[14px] font-medium px-4 py-2.5 rounded-xl transition">
                     Delete
                   </button>
                 )}
