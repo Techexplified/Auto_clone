@@ -18,22 +18,25 @@ function openPopup(t, context) {
 }
 
 window.TrelloPowerUp.initialize({
-  "board-buttons": function () {
+  "board-buttons": function (t) {
     return [{
-      text: "Auto Clone",
+      icon: t.signUrl('./logo.png'),
+      text: "",
       callback: function (t) { return openPopup(t, "board"); },
     }];
   },
 
-  "card-buttons": function () {
+  "card-buttons": function (t) {
     return [{
+      icon: t.signUrl('./logo.png'),
       text: "Auto Clone",
       callback: function (t) { return openPopup(t, "card"); },
     }];
   },
 
-  "list-actions": function () {
+  "list-actions": function (t) {
     return [{
+      icon: t.signUrl('./logo.png'),
       text: "Auto Clone",
       callback: function (t) { return openPopup(t, "list"); },
     }];
