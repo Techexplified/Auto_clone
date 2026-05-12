@@ -186,7 +186,17 @@ function App() {
       const updated = [...rules]; const names: string[] = []; let ran = false;
       for (let i = 0; i < updated.length; i++) {
         if (!isDue(updated[i])) continue;
-        try { await api.post("cards", { idCardSource: updated[i].srcId, idList: updated[i].listId, pos: updated[i].pos === "Top" ? "top" : "bottom", keepFromSource: "attachments,checklists,comments,labels,members,stickers" }); updated[i] = { ...updated[i], lastRun: new Date().toISOString() }; names.push(updated[i].srcName); ran = true; } catch {}
+        try {
+          const token = await api.getToken();
+          const appKey = "e533ed095b0c07ac12a6f8d2aef8a3dd";
+          const posStr = updated[i].pos === "Top" ? "top" : "bottom";
+          const res = await fetch(`https://api.trello.com/1/cards?key=${appKey}&token=${token}&idList=${updated[i].listId}&idCardSource=${updated[i].srcId}&pos=${posStr}&keepFromSource=all`, { method: "POST" });
+          if (res.ok) {
+            updated[i] = { ...updated[i], lastRun: new Date().toISOString() };
+            names.push(updated[i].srcName);
+            ran = true;
+          }
+        } catch {}
       }
       if (ran) { setRules(updated); await t.set("board", "shared", RULES_KEY, updated).catch(() => {}); showToast(`Auto-cloned: ${names.join(", ")}`); }
     }
@@ -216,12 +226,25 @@ function App() {
     setSaving(true);
     try {
       const rule: CloneRule = { id: uid(), srcId: selectedCard.id, srcName: selectedCard.name, listId: actualTargetListId, listName, repeat, weekday, dayOfMonth: parseInt(dayOfMonth, 10), time: atTime || "09:00", pos: position, expiry: computeExpiry(expiry), active: true, lastRun: null, created: new Date().toISOString() };
-      const api = await t.getRestApi(); if (!(await api.isAuthorized())) await api.authorize({ scope: "read,write", expiration: "never" });
-      await api.post("cards", { idCardSource: selectedCard.id, idList: actualTargetListId, pos: position === "Top" ? "top" : "bottom", keepFromSource: "attachments,checklists,comments,labels,members,stickers" });
+      const api = await t.getRestApi(); 
+      if (!(await api.isAuthorized())) await api.authorize({ scope: "read,write", expiration: "never" });
+      
+      const token = await api.getToken();
+      const appKey = "e533ed095b0c07ac12a6f8d2aef8a3dd";
+      const posStr = position === "Top" ? "top" : "bottom";
+      
+      const res = await fetch(`https://api.trello.com/1/cards?key=${appKey}&token=${token}&idList=${actualTargetListId}&idCardSource=${selectedCard.id}&pos=${posStr}&keepFromSource=all`, {
+        method: 'POST'
+      });
+      
+      if (!res.ok) {
+        throw new Error(`Trello API: ${await res.text()}`);
+      }
+      
       rule.lastRun = new Date().toISOString();
       await persistRules([...rules, rule]);
       showToast("✓ Rule created & first clone done!");
-    } catch { showToast("✗ Failed. Try again."); } finally { setSaving(false); }
+    } catch (err: any) { showToast("✗ Failed: " + (err?.message || String(err))); } finally { setSaving(false); }
   }
 
   async function deleteRule(id: string) { await persistRules(rules.filter((r) => r.id !== id)); showToast("Rule deleted"); }
