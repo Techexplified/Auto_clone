@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, Calendar, ChevronLeft, User } from "lucide-react";
+import { Search, Calendar, ChevronLeft, User, X } from "lucide-react";
 import SelectField from "./components/SelectField";
 import { expiryOptions, positionOptions, repeatOptions, weekdayOptions, dayOfMonthOptions } from "./data/options";
 
@@ -202,21 +202,24 @@ function App() {
       {toast && <div className="fixed top-2 left-2 right-2 z-[999] bg-[#22272B] border border-[#3B444C] text-[#B6C2CF] text-[13px] px-4 py-2 rounded-xl shadow-2xl animate-pulse text-center">{toast}</div>}
 
       <div className="flex items-center justify-between mb-5 relative">
-        {view !== "form" ? (
-          <button type="button" onClick={() => setView("form")} className="p-1 -ml-1 text-[#8C9BAB] hover:text-[#B6C2CF] transition" aria-label="Back">
-            <ChevronLeft size={22} />
-          </button>
-        ) : (
-          <div className="w-8" />
-        )}
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-8 pl-1 pr-3 rounded-full border border-[#2C333A] bg-[#2C333A] hover:bg-zinc-700 transition flex items-center gap-2" aria-label="Account">
+          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-8 pl-1 pr-3 rounded-full border border-[#2C333A] bg-[#2C333A] hover:bg-[#3B444C] transition flex items-center gap-2" aria-label="Account">
             <div className="h-6 w-6 rounded-full overflow-hidden bg-[#22272b] grid place-items-center shrink-0">
               {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={14} className="text-[#8C9BAB]" />}
             </div>
             <span className="text-[12px] text-[#B6C2CF] font-medium truncate max-w-[100px]">{member?.fullName?.split(" ")[0] ?? member?.username ?? "User"}</span>
           </button>
         </div>
+
+        {view !== "form" ? (
+          <button type="button" onClick={() => setView("form")} className="p-1 -mr-1 text-[#8C9BAB] hover:text-[#B6C2CF] transition" aria-label="Back">
+            <ChevronLeft size={22} />
+          </button>
+        ) : (
+          <button type="button" onClick={() => { if (t) t.closePopup(); }} className="p-1 -mr-1 text-[#8C9BAB] hover:text-[#B6C2CF] transition" aria-label="Close">
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       {view === "account" && (

@@ -31,7 +31,6 @@ function openPopup(t, context) {
     safe(t.set("board", "shared", "autoClonePrefetch", payload), null);
 
     return t.popup({
-      title: "Auto Clone",
       url: "./index.html?ctx=" + context + "&v=" + Date.now(),
       height: 540,
       accentColor: "#2b2c2f",
