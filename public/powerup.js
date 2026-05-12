@@ -40,21 +40,28 @@ window.TrelloPowerUp.initialize({
   },
 
   "card-back-section": function(t, options) {
-    return t.get("board", "shared", "autoCloneRules").then(function(rules) {
-      if (!rules) return null;
-      var cardId = options.card ? options.card.id : null;
-      var rule = rules.find(function(r) { return r.srcId === cardId && r.active; });
-      if (!rule) return null; // Only show if this card has an active rule
+    return Promise.all([
+      t.card('id'),
+      t.get('board', 'shared', 'autoCloneRules')
+    ]).then(function(data) {
+      var card = data[0];
+      var rules = data[1];
+      if (!card || !rules) return null;
+      
+      var rule = rules.find(function(r) { return r.srcId === card.id && r.active; });
+      if (!rule) return null;
 
       return {
         title: 'Auto Clone',
         icon: 'https://cdn-icons-png.flaticon.com/512/2889/2889312.png',
         content: {
           type: 'iframe',
-          url: t.signUrl('./index.html?ctx=cardback&cardId=' + cardId),
+          url: t.signUrl('./index.html?ctx=cardback&cardId=' + card.id),
           height: 80
         }
       };
+    }).catch(function(e) {
+      return null;
     });
   }
 });
