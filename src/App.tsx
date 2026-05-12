@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Search, Calendar, ChevronLeft, User } from "lucide-react";
 import SelectField from "./components/SelectField";
 import { expiryOptions, positionOptions, repeatOptions, weekdayOptions, dayOfMonthOptions } from "./data/options";
 
@@ -199,59 +200,62 @@ function App() {
   function expiryLabel(r: CloneRule) { return r.expiry === "never" ? "No expiry" : `Expires ${new Date(r.expiry).toLocaleDateString()}`; }
 
   return (
-    <div className="p-3 text-[#B6C2CF] w-full">
-      {toast && <div className="fixed top-2 left-2 right-2 z-[999] bg-[#1D2125] border border-[#579DFF] text-[#B6C2CF] text-[12px] px-3 py-2 rounded-[8px] shadow-xl animate-pulse">{toast}</div>}
+    <div className="p-4 bg-[#141518] min-h-screen text-zinc-200 w-full font-sans flex flex-col relative overflow-x-hidden">
+      {toast && <div className="fixed top-2 left-2 right-2 z-[999] bg-zinc-800 border border-zinc-700 text-zinc-200 text-[13px] px-4 py-2 rounded-xl shadow-2xl animate-pulse text-center">{toast}</div>}
 
-      <div className="flex items-center justify-between gap-2 mb-3">
+      <div className="flex items-center justify-between mb-5 relative">
         {view !== "form" ? (
-          <button type="button" onClick={() => setView("form")} className="h-7 w-7 rounded-[6px] border border-[#3B444C] bg-[#22272B] hover:bg-[#2C333A] transition grid place-items-center" aria-label="Back">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#9FADBC]"><path d="m15 18-6-6 6-6" /></svg>
+          <button type="button" onClick={() => setView("form")} className="p-1 -ml-1 text-zinc-400 hover:text-zinc-200 transition" aria-label="Back">
+            <ChevronLeft size={22} />
           </button>
-        ) : <div />}
-        <div className="flex items-center gap-1.5">
-          <button type="button" onClick={() => { setView(view === "rules" ? "form" : "rules"); setCardMenuOpen(false); }} className="h-7 px-2 rounded-[6px] border border-[#3B444C] bg-[#22272B] hover:bg-[#2C333A] transition flex items-center gap-1 text-[11px] text-[#9FADBC]">
+        ) : (
+          <div className="w-8" />
+        )}
+        <h1 className="text-[17px] font-medium text-white absolute left-1/2 -translate-x-1/2">Auto Clone</h1>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => { setView(view === "rules" ? "form" : "rules"); setCardMenuOpen(false); }} className="h-8 px-2.5 rounded-full border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 transition flex items-center gap-1.5 text-[12px] text-zinc-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             {rules.filter((r) => r.active).length || 0}
-            <span className="ml-1 px-1 py-0.5 rounded-[4px] bg-[#579DFF]/20 text-[#579DFF] text-[9px] font-bold" title={debugInfo}>v4:{ctx} {debugInfo}</span>
+            <span className="ml-1 px-1 py-0.5 rounded-[4px] bg-blue-500/20 text-blue-400 text-[9px] font-bold" title={debugInfo}>{ctx.slice(0, 1).toUpperCase()}</span>
           </button>
-          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-7 w-7 rounded-full border border-[#3B444C] bg-[#22272B] hover:bg-[#2C333A] transition overflow-hidden grid place-items-center" aria-label="Account">
-            {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <span className="text-[12px] text-[#9FADBC]">{(member?.fullName ?? "U").trim().slice(0, 1).toUpperCase()}</span>}
+          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-8 w-8 rounded-full border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 transition overflow-hidden grid place-items-center" aria-label="Account">
+            {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={14} className="text-zinc-400" />}
           </button>
         </div>
       </div>
 
       {view === "account" && (
-        <div className="mt-3">
-          <div className="flex items-center gap-3 bg-[#22272B] border border-[#3B444C] rounded-[10px] p-3">
-            <div className="h-10 w-10 rounded-full overflow-hidden border border-[#3B444C] bg-[#1D2125] grid place-items-center">
-              {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <span className="text-[14px] text-[#9FADBC] font-semibold">{(member?.fullName ?? "U").trim().slice(0, 1).toUpperCase()}</span>}
+        <div className="mt-2">
+          <div className="flex items-center gap-3 bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+            <div className="h-12 w-12 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800 grid place-items-center shrink-0">
+              {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={20} className="text-zinc-400" />}
             </div>
             <div className="min-w-0">
-              <div className="text-[14px] font-medium text-[#B6C2CF] truncate">{member?.fullName ?? "Unknown"}</div>
-              <div className="text-[12px] text-[#9FADBC] truncate">{member?.username ? `@${member.username}` : "@"}</div>
+              <div className="text-[15px] font-medium text-white truncate">{member?.fullName ?? "Unknown"}</div>
+              <div className="text-[13px] text-zinc-400 truncate">{member?.username ? `@${member.username}` : "@"}</div>
             </div>
           </div>
         </div>
       )}
 
       {view === "rules" && (
-        <div className="mt-1">
-          <h2 className="text-[13px] font-semibold text-[#9FADBC] mb-2">Rules ({rules.length})</h2>
-          {rules.length === 0 ? <div className="text-[12px] text-[#758195] bg-[#22272B] border border-[#3B444C] rounded-[8px] p-4 text-center">No rules yet.</div> : (
-            <div className="flex flex-col gap-2 max-h-72 overflow-auto">
+        <div className="mt-2">
+          <h2 className="text-[13px] font-medium text-zinc-400 mb-3 px-1">Rules ({rules.length})</h2>
+          {rules.length === 0 ? <div className="text-[13px] text-zinc-500 bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 text-center">No rules yet.</div> : (
+            <div className="flex flex-col gap-3 max-h-96 overflow-y-auto pr-1">
               {rules.map((r) => (
-                <div key={r.id} className={`bg-[#22272B] border rounded-[8px] p-2.5 transition ${r.active ? "border-[#3B444C]" : "border-[#2C333A] opacity-60"}`}>
-                  <div className="flex items-start justify-between gap-2">
+                <div key={r.id} className={`bg-zinc-900/50 border rounded-xl p-3.5 transition ${r.active ? "border-zinc-700" : "border-zinc-800 opacity-50"}`}>
+                  <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <div className="text-[13px] font-medium text-[#B6C2CF] truncate">{r.srcName}</div>
-                      <div className="text-[11px] text-[#9FADBC] truncate">→ {r.listName}</div>
-                      <div className="text-[10px] text-[#758195] mt-1">{scheduleLabel(r)} · {expiryLabel(r)}</div>
-                      {r.lastRun && <div className="text-[10px] text-[#758195]">Last: {new Date(r.lastRun).toLocaleString()}</div>}
+                      <div className="text-[14px] font-medium text-zinc-200 truncate">{r.srcName}</div>
+                      <div className="text-[12px] text-zinc-400 truncate mt-0.5">→ {r.listName}</div>
+                      <div className="text-[11px] text-zinc-500 mt-2">{scheduleLabel(r)} · {expiryLabel(r)}</div>
+                      {r.lastRun && <div className="text-[11px] text-zinc-500 mt-0.5">Last: {new Date(r.lastRun).toLocaleString()}</div>}
                     </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button type="button" onClick={() => toggleRule(r.id)} className={`h-6 w-9 rounded-full transition relative ${r.active ? "bg-[#579DFF]" : "bg-[#3B444C]"}`}><div className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${r.active ? "left-3.5" : "left-0.5"}`} /></button>
-                      <button type="button" onClick={() => deleteRule(r.id)} className="h-6 w-6 rounded-[4px] hover:bg-[#3B444C] transition grid place-items-center text-[#9FADBC] hover:text-red-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                    <div className="flex items-center gap-1.5 shrink-0 mt-1">
+                      <button type="button" onClick={() => toggleRule(r.id)} className={`h-6 w-10 rounded-full transition relative ${r.active ? "bg-zinc-600" : "bg-zinc-800"}`}><div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${r.active ? "left-5" : "left-1"}`} /></button>
+                      <button type="button" onClick={() => deleteRule(r.id)} className="h-8 w-8 rounded-lg hover:bg-zinc-800 transition grid place-items-center text-zinc-500 hover:text-red-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                       </button>
                     </div>
                   </div>
@@ -263,15 +267,15 @@ function App() {
       )}
 
       {view === "form" && (
-        <>
-          {loading ? <div className="flex items-center justify-center py-8 text-[12px] text-[#758195]">Loading board data…</div> : (
+        <div className="flex flex-col gap-4 pb-4">
+          {loading ? <div className="flex items-center justify-center py-10 text-[13px] text-zinc-500">Loading board data…</div> : (
             <>
               {/* CARD context: show card info only, no selectors */}
               {ctx === "card" && selectedCard && (
-                <div className="mb-4 bg-[#22272B] border border-[#3B444C] rounded-[8px] p-2.5">
-                  <div className="text-[10px] font-semibold text-[#758195] uppercase tracking-wide mb-1">Cloning card</div>
-                  <div className="text-[13px] font-medium text-[#B6C2CF] truncate">{selectedCard.name}</div>
-                  <div className="text-[11px] text-[#9FADBC] truncate">in {listNameById.get(selectedCard.idList) ?? "list"}</div>
+                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+                  <div className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest mb-1.5">Cloning card</div>
+                  <div className="text-[15px] font-medium text-zinc-200 truncate">{selectedCard.name}</div>
+                  <div className="text-[13px] text-zinc-400 truncate mt-0.5">in {listNameById.get(selectedCard.idList) ?? "list"}</div>
                 </div>
               )}
 
@@ -287,30 +291,32 @@ function App() {
 
               {/* LIST context: show which list (read-only info) */}
               {ctx === "list" && (
-                <div className="mb-4 bg-[#22272B] border border-[#3B444C] rounded-[8px] p-2.5">
-                  <div className="text-[10px] font-semibold text-[#758195] uppercase tracking-wide mb-1">List</div>
-                  <div className="text-[13px] font-medium text-[#B6C2CF] truncate">{listNameById.get(selectedListId) ?? "Selected list"}</div>
+                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+                  <div className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest mb-1.5">List</div>
+                  <div className="text-[15px] font-medium text-zinc-200 truncate">{listNameById.get(selectedListId) ?? "Selected list"}</div>
                 </div>
               )}
 
               {/* BOARD & LIST: Card selector (filtered by selected list) */}
               {(ctx === "board" || ctx === "list") && (
-                <div className="mb-4 relative">
-                  <label className="text-[12px] font-semibold text-[#9FADBC] mb-1 block">Select a card</label>
-                  <input type="text" value={cardQuery} placeholder="Search card by name"
-                    onChange={(e) => { setCardQuery(e.target.value); setCardMenuOpen(true); }}
-                    onFocus={() => setCardMenuOpen(true)}
-                    className="w-full bg-[#22272B] border border-[#3B444C] rounded-[3px] px-3 py-1.5 text-[14px] text-[#B6C2CF] placeholder-[#758195] outline-none hover:border-[#579DFF] focus:border-[#579DFF] transition" />
-                  {selectedCard && <div className="mt-1 text-[11px] text-[#9FADBC]">Selected: {selectedCard.name}</div>}
+                <div className="relative">
+                  <label className="text-[13px] text-zinc-400 mb-1.5 block">Select a card</label>
+                  <div className="relative">
+                    <input type="text" value={cardQuery} placeholder="Search"
+                      onChange={(e) => { setCardQuery(e.target.value); setCardMenuOpen(true); }}
+                      onFocus={() => setCardMenuOpen(true)}
+                      className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 pr-10 text-[14px] text-zinc-200 placeholder-zinc-500 outline-none hover:border-zinc-700 focus:border-zinc-700 transition" />
+                    <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+                  </div>
                   {cardMenuOpen && (
-                    <div className="absolute z-50 mt-1 w-full max-h-44 overflow-auto bg-[#282E33] border border-[#3B444C] rounded-[8px] shadow-2xl">
-                      {filteredCards.length === 0 ? <div className="px-3 py-2 text-[12px] text-[#9FADBC]">{selectedListId ? "No cards in this list" : "No cards found"}</div> : (
+                    <div className="absolute z-50 mt-1 w-full max-h-56 overflow-auto bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl py-1">
+                      {filteredCards.length === 0 ? <div className="px-4 py-3 text-[13px] text-zinc-400">{selectedListId ? "No cards in this list" : "No cards found"}</div> : (
                         filteredCards.map((c) => (
                           <button key={c.id} type="button"
                             onClick={() => { setSelectedCardId(c.id); setCardQuery(c.name); setCardMenuOpen(false); const ln = listNameById.get(c.idList); if (ln) setTargetListName(ln); }}
-                            className={`w-full text-left px-3 py-2 text-[13px] hover:bg-[#3B444C] transition ${c.id === selectedCardId ? "bg-[#3B444C]/50" : ""}`}>
-                            <div className="truncate text-[#B6C2CF]">{c.name}</div>
-                            <div className="text-[11px] text-[#9FADBC] truncate">{listNameById.get(c.idList) ?? ""}</div>
+                            className={`w-full text-left px-4 py-2.5 transition hover:bg-zinc-700/50 ${c.id === selectedCardId ? "bg-zinc-700/30" : ""}`}>
+                            <div className="text-[14px] text-zinc-200 truncate">{c.name}</div>
+                            <div className="text-[12px] text-zinc-400 truncate mt-0.5">{listNameById.get(c.idList) ?? ""}</div>
                           </button>
                         ))
                       )}
@@ -321,33 +327,54 @@ function App() {
 
               {/* Clone settings — always shown */}
               <SelectField label="Repeats" value={repeat} options={repeatOptions} onChange={setRepeat} />
-              {repeat === "Weekly" && <SelectField label="On day" value={weekday} options={weekdayOptions} onChange={setWeekday} />}
-              {repeat === "Monthly" && <SelectField label="On day of month" value={dayOfMonth} options={dayOfMonthOptions} onChange={setDayOfMonth} />}
-              <div className="mb-4">
-                <label className="text-[12px] font-semibold text-[#9FADBC] mb-1.5 block">At</label>
-                <div className="bg-[#22272B] border border-[#3B444C] rounded-[3px] px-3 py-2 focus-within:border-[#579DFF]">
-                  <input type="time" value={atTime} onChange={(e) => setAtTime(e.target.value)} className="w-full bg-transparent text-[14px] text-[#B6C2CF] outline-none" />
+              
+              <div>
+                <label className="text-[13px] text-zinc-400 mb-1.5 block">At</label>
+                <div className="relative">
+                  <input type="time" value={atTime} onChange={(e) => setAtTime(e.target.value)} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-[14px] text-zinc-200 outline-none hover:border-zinc-700 focus:border-zinc-700 transition [color-scheme:dark]" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <SelectField label="Expiry" value={expiry} options={expiryOptions} onChange={setExpiry} />
+
+              {repeat === "Weekly" && (
+                <div>
+                  <label className="text-[13px] text-zinc-400 mb-1.5 block">On</label>
+                  <div className="relative">
+                    <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+                    <select value={weekday} onChange={(e) => setWeekday(e.target.value)} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 pl-11 text-[14px] text-zinc-200 outline-none hover:border-zinc-700 focus:border-zinc-700 transition appearance-none cursor-pointer">
+                      {weekdayOptions.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  </div>
+                </div>
+              )}
+              {repeat === "Monthly" && (
+                <div>
+                  <label className="text-[13px] text-zinc-400 mb-1.5 block">On</label>
+                  <div className="relative">
+                    <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+                    <select value={dayOfMonth} onChange={(e) => setDayOfMonth(e.target.value)} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 pl-11 text-[14px] text-zinc-200 outline-none hover:border-zinc-700 focus:border-zinc-700 transition appearance-none cursor-pointer">
+                      {dayOfMonthOptions.map(o => <option key={o} value={o}>Day {o}</option>)}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <SelectField label="Every" value={expiry} options={expiryOptions} onChange={setExpiry} />
                 <SelectField label="Position" value={position} options={positionOptions} onChange={setPosition} />
               </div>
 
               {(ctx === "board" || ctx === "list") && (
-                <div className="mt-4">
-                  <SelectField label="Clone to list" value={targetListName || "Select list"} options={lists.map((l) => l.name)} onChange={setTargetListName} />
-                </div>
+                <SelectField label="List" value={targetListName || "Select list"} options={lists.map((l) => l.name)} onChange={setTargetListName} />
               )}
 
-              <div className="flex justify-end mt-4">
-                <button type="button" onClick={onSave} disabled={saving} className="bg-[#579DFF] hover:bg-[#85B8FF] text-[#1D2125] text-[13px] font-semibold px-5 py-1.5 rounded-[3px] transition disabled:opacity-60">
-                  {saving ? "Saving…" : "Save Rule & Clone"}
+              <div className="flex justify-end mt-2">
+                <button type="button" onClick={onSave} disabled={saving} className="bg-[#2B2D31] hover:bg-[#35373C] border border-[#3B3D41] text-zinc-200 text-[14px] font-medium px-6 py-2.5 rounded-xl transition disabled:opacity-50 min-w-[100px]">
+                  {saving ? "Saving…" : "Save"}
                 </button>
               </div>
             </>
           )}
-        </>
+        </div>
       )}
     </div>
   );
