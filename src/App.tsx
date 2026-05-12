@@ -211,15 +211,12 @@ function App() {
         ) : (
           <div className="w-8" />
         )}
-        <h1 className="text-[17px] font-medium text-white absolute left-1/2 -translate-x-1/2">Auto Clone</h1>
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => { setView(view === "rules" ? "form" : "rules"); setCardMenuOpen(false); }} className="h-8 px-2.5 rounded-full border border-[#2C333A] bg-[#2C333A] hover:bg-zinc-700 transition flex items-center gap-1.5 text-[12px] text-zinc-300">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-            {rules.filter((r) => r.active).length || 0}
-            <span className="ml-1 px-1 py-0.5 rounded-[4px] bg-blue-500/20 text-blue-400 text-[9px] font-bold" title={debugInfo}>{ctx.slice(0, 1).toUpperCase()}</span>
-          </button>
-          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-8 w-8 rounded-full border border-[#2C333A] bg-[#2C333A] hover:bg-zinc-700 transition overflow-hidden grid place-items-center" aria-label="Account">
-            {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={14} className="text-[#8C9BAB]" />}
+          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-8 pl-1 pr-3 rounded-full border border-[#2C333A] bg-[#2C333A] hover:bg-zinc-700 transition flex items-center gap-2" aria-label="Account">
+            <div className="h-6 w-6 rounded-full overflow-hidden bg-[#22272b] grid place-items-center shrink-0">
+              {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={14} className="text-[#8C9BAB]" />}
+            </div>
+            <span className="text-[12px] text-[#B6C2CF] font-medium truncate max-w-[100px]">{member?.fullName?.split(" ")[0] ?? member?.username ?? "User"}</span>
           </button>
         </div>
       </div>
