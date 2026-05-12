@@ -183,7 +183,28 @@ function App() {
     return () => { cancelled = true; };
   }, [t]);
 
-  useEffect(() => { if (!t) return; t.get("board", "shared", RULES_KEY).then((d: CloneRule[] | null) => { if (Array.isArray(d)) setRules(d); }).catch(() => {}); }, [t]);
+  useEffect(() => { 
+    if (!t) return; 
+    t.get("board", "shared", RULES_KEY).then((d: CloneRule[] | null) => { 
+      if (Array.isArray(d)) {
+        setRules(d); 
+        const urlCardId = new URLSearchParams(window.location.search).get("cardId");
+        const isEdit = new URLSearchParams(window.location.search).get("edit") === "true";
+        if (isEdit && urlCardId) {
+          const rule = d.find(r => r.srcId === urlCardId);
+          if (rule) {
+            setRepeat(rule.repeat);
+            if (rule.weekday) setWeekday(rule.weekday);
+            if (rule.dayOfMonth) setDayOfMonth(rule.dayOfMonth.toString());
+            if (rule.time) setAtTime(rule.time);
+            if (rule.pos) setPosition(rule.pos);
+            if (rule.listId) setTargetListId(rule.listId);
+            setExpiry(rule.expiry === "never" ? "never" : "1_month");
+          }
+        }
+      }
+    }).catch(() => {}); 
+  }, [t]);
 
   useEffect(() => {
     if (!t || !rules.length || loading) return;
@@ -231,25 +252,27 @@ function App() {
     const listName = listNameById.get(actualTargetListId) ?? "Unknown";
     setSaving(true);
     try {
-      const rule: CloneRule = { id: uid(), srcId: selectedCard.id, srcName: selectedCard.name, listId: actualTargetListId, listName, repeat, weekday, dayOfMonth: parseInt(dayOfMonth, 10), time: atTime || "09:00", pos: position, expiry: computeExpiry(expiry), active: true, lastRun: null, created: new Date().toISOString() };
-      const api = await t.getRestApi(); 
-      if (!(await api.isAuthorized())) await api.authorize({ scope: "read,write,account", expiration: "never" });
+      const existingIdx = rules.findIndex(r => r.srcId === selectedCard.id);
+      const rule: CloneRule = { id: existingIdx >= 0 ? rules[existingIdx].id : uid(), srcId: selectedCard.id, srcName: selectedCard.name, listId: actualTargetListId, listName, repeat, weekday, dayOfMonth: parseInt(dayOfMonth, 10), time: atTime || "09:00", pos: position, expiry: computeExpiry(expiry), active: true, lastRun: existingIdx >= 0 ? rules[existingIdx].lastRun : null, created: existingIdx >= 0 ? rules[existingIdx].created : new Date().toISOString() };
       
-      const token = await api.getToken();
-      const appKey = "e533ed095b0c07ac12a6f8d2aef8a3dd";
-      const posStr = position === "Top" ? "top" : "bottom";
-      
-      const res = await fetch(`https://api.trello.com/1/cards?key=${appKey}&token=${token}&idList=${actualTargetListId}&idCardSource=${selectedCard.id}&pos=${posStr}&keepFromSource=all`, {
-        method: 'POST'
-      });
-      
-      if (!res.ok) {
-        throw new Error(`Trello API: ${await res.text()}`);
+      if (existingIdx < 0) {
+        const api = await t.getRestApi(); 
+        if (!(await api.isAuthorized())) await api.authorize({ scope: "read,write,account", expiration: "never" });
+        const token = await api.getToken();
+        const appKey = "e533ed095b0c07ac12a6f8d2aef8a3dd";
+        const posStr = position === "Top" ? "top" : "bottom";
+        
+        const res = await fetch(`https://api.trello.com/1/cards?key=${appKey}&token=${token}&idList=${actualTargetListId}&idCardSource=${selectedCard.id}&pos=${posStr}&keepFromSource=all`, { method: 'POST' });
+        if (!res.ok) throw new Error(`Trello API: ${await res.text()}`);
+        rule.lastRun = new Date().toISOString();
       }
       
-      rule.lastRun = new Date().toISOString();
-      await persistRules([...rules, rule]);
-      showToast("✓ Rule created & first clone done!");
+      const newRules = [...rules];
+      if (existingIdx >= 0) newRules[existingIdx] = rule;
+      else newRules.push(rule);
+      
+      await persistRules(newRules);
+      showToast(existingIdx >= 0 ? "✓ Rule updated!" : "✓ Rule created & first clone done!");
     } catch (err: any) { showToast("✗ Failed: " + (err?.message || String(err))); } finally { setSaving(false); }
   }
 
@@ -463,7 +486,10 @@ function App() {
       )}
 
       {view === "cardback" && (
-        <div className="flex items-center justify-between bg-[#22272b] border border-[#3B444C] rounded-lg p-3">
+        <div 
+          onClick={() => { if (t) t.popup({ title: 'Edit Auto Clone', url: './index.html?ctx=card&cardId=' + selectedCardId + '&edit=true', height: 400 }); }}
+          className="flex items-center justify-between bg-[#22272b] border border-[#3B444C] rounded-lg p-3 cursor-pointer hover:bg-[#2C333A] transition"
+        >
           <div>
             <div className="text-[11px] font-medium text-[#738496] uppercase tracking-widest mb-1">Next Repeat</div>
             <div className="text-[14px] font-medium text-[#B6C2CF]">
