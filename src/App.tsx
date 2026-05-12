@@ -60,6 +60,7 @@ function App() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [needsAuth, setNeedsAuth] = useState(false);
+  const [debugError, setDebugError] = useState<string>("");
 
 
   useEffect(() => { let a = 0; const id = setInterval(() => { a++; try { const c = window.TrelloPowerUp?.iframe?.(); if (c) { setT(c); clearInterval(id); } } catch {} if (a >= 30) clearInterval(id); }, 120); return () => clearInterval(id); }, []);
@@ -101,7 +102,11 @@ function App() {
 
         // Fallback fetches
         if (!mem || !bLists?.length || !bCards?.length) {
-          const [m, l, c] = await Promise.all([t.member("all").catch(() => null), t.lists("all").catch(() => []), t.cards("all").catch(() => [])]);
+          const [m, l, c] = await Promise.all([
+            t.member("all").catch((e: any) => { setDebugError(prev => prev + " memErr:" + e?.message); return null; }), 
+            t.lists("id", "name").catch((e: any) => { setDebugError(prev => prev + " listErr:" + e?.message); return []; }), 
+            t.cards("id", "name", "desc", "idList", "idMembers", "idLabels").catch((e: any) => { setDebugError(prev => prev + " cardErr:" + e?.message); return []; })
+          ]);
           mem = mem ?? m; bLists = bLists?.length ? bLists : l; bCards = bCards?.length ? bCards : c;
         }
         if (!mem?.username || !bLists?.length || !bCards?.length) {
@@ -115,11 +120,19 @@ function App() {
             }
             const c2 = await t.getContext().catch(() => ({})); 
             const bid = c2?.board || (await t.board("id").catch(() => null))?.id || "";
-            const [me, ls, cs] = await Promise.all([api.get("members/me", { fields: "fullName,username,avatarUrl" }).catch(() => null), bid ? api.get(`boards/${bid}/lists`, { fields: "id,name", filter: "open" }).catch(() => []) : [], bid ? api.get(`boards/${bid}/cards`, { fields: "id,name,desc,idList,idMembers,idLabels", filter: "open" }).catch(() => []) : []]);
+            if (!bid) setDebugError(prev => prev + " noBid");
+            
+            const [me, ls, cs] = await Promise.all([
+              api.get("members/me", { fields: "fullName,username,avatarUrl" }).catch((e: any) => { setDebugError(prev => prev + " apiMem:" + e?.message); return null; }), 
+              bid ? api.get(`boards/${bid}/lists`, { fields: "id,name", filter: "open" }).catch((e: any) => { setDebugError(prev => prev + " apiList:" + e?.message); return []; }) : [], 
+              bid ? api.get(`boards/${bid}/cards`, { fields: "id,name,desc,idList,idMembers,idLabels", filter: "open" }).catch((e: any) => { setDebugError(prev => prev + " apiCard:" + e?.message); return []; }) : []
+            ]);
+            
             mem = { ...(mem ?? {}), ...(me ?? {}) }; 
             if (!bLists?.length && Array.isArray(ls)) bLists = ls; 
             if (!bCards?.length && Array.isArray(cs)) bCards = cs;
           } catch (err: any) {
+            setDebugError(prev => prev + " apiOut:" + err?.message);
             setToast("API error: " + err?.message);
           }
         }
@@ -311,7 +324,7 @@ function App() {
                     options={lists.map((l) => l.name)}
                     onChange={(name) => { const li = lists.find((l) => l.name === name); if (li) { setSelectedListId(li.id); setTargetListName(name); setSelectedCardId(""); setCardQuery(""); } }}
                   />
-                  <div className="text-[10px] text-red-400 mt-1">Debug Lists: {lists.length} | Context: {ctx}</div>
+                  <div className="text-[10px] text-red-400 mt-1">Debug Lists: {lists.length} | Context: {ctx} {debugError && `| Err: ${debugError}`}</div>
                 </>
               )}
 
