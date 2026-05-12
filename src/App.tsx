@@ -75,13 +75,12 @@ function App() {
         const urlCtx = new URLSearchParams(window.location.search).get("ctx");
         const ctxArg = typeof t.arg === "function" ? await t.arg("context").catch(() => null) : null;
         const pf = (typeof t.arg === "function" ? await t.arg("prefetch").catch(() => null) : null) ?? {};
-        const sp = (await t.get("board", "shared", "autoClonePrefetch").catch(() => null)) ?? {};
-
-        let mem = pf.member ?? sp.member ?? null;
-        let bLists = pf.lists ?? sp.lists ?? [];
-        let bCards = pf.cards ?? sp.cards ?? [];
-        const curCard = pf.currentCard ?? sp.currentCard ?? null;
-        const curList = pf.currentList ?? sp.currentList ?? null;
+        
+        let mem = pf.member ?? null;
+        let bLists = pf.lists ?? [];
+        let bCards = pf.cards ?? [];
+        const curCard = pf.currentCard ?? null;
+        const curList = pf.currentList ?? null;
 
         // Detect context: URL param > arg > infer from data
         let context: Context = "board";
@@ -100,8 +99,8 @@ function App() {
         }
 
         // Fallback fetches
-        if (!mem || !Array.isArray(bLists) || !Array.isArray(bCards)) {
-          const [m, l, c] = await Promise.all([t.member("all").catch(() => null), t.lists("id", "name").catch(() => []), t.cards("id", "name", "desc", "idList", "idMembers", "idLabels").catch(() => [])]);
+        if (!mem || !bLists?.length || !bCards?.length) {
+          const [m, l, c] = await Promise.all([t.member("all").catch(() => null), t.lists("all").catch(() => []), t.cards("all").catch(() => [])]);
           mem = mem ?? m; bLists = bLists?.length ? bLists : l; bCards = bCards?.length ? bCards : c;
         }
         if (!mem?.username || !bLists?.length || !bCards?.length) {
