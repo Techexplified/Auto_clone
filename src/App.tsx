@@ -59,7 +59,7 @@ function App() {
   const [rules, setRules] = useState<CloneRule[]>([]);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string>("");
+
 
   useEffect(() => { let a = 0; const id = setInterval(() => { a++; try { const c = window.TrelloPowerUp?.iframe?.(); if (c) { setT(c); clearInterval(id); } } catch {} if (a >= 30) clearInterval(id); }, 120); return () => clearInterval(id); }, []);
   useEffect(() => { if (!t?.render || !t?.sizeTo) return; try { t.render(() => t.sizeTo("#root").catch(() => {})); } catch {} }, [t]);
@@ -95,10 +95,8 @@ function App() {
           context = "list";
         }
         
-        const debugStr = `u:${urlCtx || 'N'} a:${ctxArg || 'N'} c:${curCard?.id ? 'Y' : 'N'}`;
         if (!cancelled) {
           setCtx(context);
-          setDebugInfo(debugStr);
         }
 
         // Fallback fetches
