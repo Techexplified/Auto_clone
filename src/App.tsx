@@ -200,12 +200,12 @@ function App() {
   function expiryLabel(r: CloneRule) { return r.expiry === "never" ? "No expiry" : `Expires ${new Date(r.expiry).toLocaleDateString()}`; }
 
   return (
-    <div className="p-4 bg-[#141518] min-h-screen text-zinc-200 w-full font-sans flex flex-col relative overflow-x-hidden">
-      {toast && <div className="fixed top-2 left-2 right-2 z-[999] bg-zinc-800 border border-zinc-700 text-zinc-200 text-[13px] px-4 py-2 rounded-xl shadow-2xl animate-pulse text-center">{toast}</div>}
+    <div className="p-4 bg-[#2b2c2f] min-h-screen text-[#B6C2CF] w-full font-sans flex flex-col relative overflow-x-hidden">
+      {toast && <div className="fixed top-2 left-2 right-2 z-[999] bg-[#22272B] border border-[#3B444C] text-[#B6C2CF] text-[13px] px-4 py-2 rounded-xl shadow-2xl animate-pulse text-center">{toast}</div>}
 
       <div className="flex items-center justify-between mb-5 relative">
         {view !== "form" ? (
-          <button type="button" onClick={() => setView("form")} className="p-1 -ml-1 text-zinc-400 hover:text-zinc-200 transition" aria-label="Back">
+          <button type="button" onClick={() => setView("form")} className="p-1 -ml-1 text-[#8C9BAB] hover:text-[#B6C2CF] transition" aria-label="Back">
             <ChevronLeft size={22} />
           </button>
         ) : (
@@ -213,26 +213,26 @@ function App() {
         )}
         <h1 className="text-[17px] font-medium text-white absolute left-1/2 -translate-x-1/2">Auto Clone</h1>
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => { setView(view === "rules" ? "form" : "rules"); setCardMenuOpen(false); }} className="h-8 px-2.5 rounded-full border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 transition flex items-center gap-1.5 text-[12px] text-zinc-300">
+          <button type="button" onClick={() => { setView(view === "rules" ? "form" : "rules"); setCardMenuOpen(false); }} className="h-8 px-2.5 rounded-full border border-[#2C333A] bg-[#2C333A] hover:bg-zinc-700 transition flex items-center gap-1.5 text-[12px] text-zinc-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             {rules.filter((r) => r.active).length || 0}
             <span className="ml-1 px-1 py-0.5 rounded-[4px] bg-blue-500/20 text-blue-400 text-[9px] font-bold" title={debugInfo}>{ctx.slice(0, 1).toUpperCase()}</span>
           </button>
-          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-8 w-8 rounded-full border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 transition overflow-hidden grid place-items-center" aria-label="Account">
-            {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={14} className="text-zinc-400" />}
+          <button type="button" onClick={() => { setView(view === "account" ? "form" : "account"); setCardMenuOpen(false); }} className="h-8 w-8 rounded-full border border-[#2C333A] bg-[#2C333A] hover:bg-zinc-700 transition overflow-hidden grid place-items-center" aria-label="Account">
+            {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={14} className="text-[#8C9BAB]" />}
           </button>
         </div>
       </div>
 
       {view === "account" && (
         <div className="mt-2">
-          <div className="flex items-center gap-3 bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
-            <div className="h-12 w-12 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800 grid place-items-center shrink-0">
-              {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={20} className="text-zinc-400" />}
+          <div className="flex items-center gap-3 bg-[#22272b] border border-[#3B444C] rounded-xl p-4">
+            <div className="h-12 w-12 rounded-full overflow-hidden border border-[#2C333A] bg-[#2C333A] grid place-items-center shrink-0">
+              {member?.avatarUrl ? <img src={member.avatarUrl} alt="User" className="h-full w-full object-cover" /> : <User size={20} className="text-[#8C9BAB]" />}
             </div>
             <div className="min-w-0">
               <div className="text-[15px] font-medium text-white truncate">{member?.fullName ?? "Unknown"}</div>
-              <div className="text-[13px] text-zinc-400 truncate">{member?.username ? `@${member.username}` : "@"}</div>
+              <div className="text-[13px] text-[#8C9BAB] truncate">{member?.username ? `@${member.username}` : "@"}</div>
             </div>
           </div>
         </div>
@@ -240,21 +240,21 @@ function App() {
 
       {view === "rules" && (
         <div className="mt-2">
-          <h2 className="text-[13px] font-medium text-zinc-400 mb-3 px-1">Rules ({rules.length})</h2>
-          {rules.length === 0 ? <div className="text-[13px] text-zinc-500 bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 text-center">No rules yet.</div> : (
+          <h2 className="text-[13px] font-medium text-[#8C9BAB] mb-3 px-1">Rules ({rules.length})</h2>
+          {rules.length === 0 ? <div className="text-[13px] text-[#738496] bg-[#22272b] border border-[#3B444C] rounded-xl p-6 text-center">No rules yet.</div> : (
             <div className="flex flex-col gap-3 max-h-96 overflow-y-auto pr-1">
               {rules.map((r) => (
-                <div key={r.id} className={`bg-zinc-900/50 border rounded-xl p-3.5 transition ${r.active ? "border-zinc-700" : "border-zinc-800 opacity-50"}`}>
+                <div key={r.id} className={`bg-[#22272b] border rounded-xl p-3.5 transition ${r.active ? "border-[#2C333A]" : "border-[#3B444C] opacity-50"}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <div className="text-[14px] font-medium text-zinc-200 truncate">{r.srcName}</div>
-                      <div className="text-[12px] text-zinc-400 truncate mt-0.5">→ {r.listName}</div>
-                      <div className="text-[11px] text-zinc-500 mt-2">{scheduleLabel(r)} · {expiryLabel(r)}</div>
-                      {r.lastRun && <div className="text-[11px] text-zinc-500 mt-0.5">Last: {new Date(r.lastRun).toLocaleString()}</div>}
+                      <div className="text-[14px] font-medium text-[#B6C2CF] truncate">{r.srcName}</div>
+                      <div className="text-[12px] text-[#8C9BAB] truncate mt-0.5">→ {r.listName}</div>
+                      <div className="text-[11px] text-[#738496] mt-2">{scheduleLabel(r)} · {expiryLabel(r)}</div>
+                      {r.lastRun && <div className="text-[11px] text-[#738496] mt-0.5">Last: {new Date(r.lastRun).toLocaleString()}</div>}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0 mt-1">
-                      <button type="button" onClick={() => toggleRule(r.id)} className={`h-6 w-10 rounded-full transition relative ${r.active ? "bg-zinc-600" : "bg-zinc-800"}`}><div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${r.active ? "left-5" : "left-1"}`} /></button>
-                      <button type="button" onClick={() => deleteRule(r.id)} className="h-8 w-8 rounded-lg hover:bg-zinc-800 transition grid place-items-center text-zinc-500 hover:text-red-400">
+                      <button type="button" onClick={() => toggleRule(r.id)} className={`h-6 w-10 rounded-full transition relative ${r.active ? "bg-zinc-600" : "bg-[#2C333A]"}`}><div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${r.active ? "left-5" : "left-1"}`} /></button>
+                      <button type="button" onClick={() => deleteRule(r.id)} className="h-8 w-8 rounded-lg hover:bg-[#2C333A] transition grid place-items-center text-[#738496] hover:text-red-400">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                       </button>
                     </div>
@@ -268,14 +268,14 @@ function App() {
 
       {view === "form" && (
         <div className="flex flex-col gap-4 pb-4">
-          {loading ? <div className="flex items-center justify-center py-10 text-[13px] text-zinc-500">Loading board data…</div> : (
+          {loading ? <div className="flex items-center justify-center py-10 text-[13px] text-[#738496]">Loading board data…</div> : (
             <>
               {/* CARD context: show card info only, no selectors */}
               {ctx === "card" && selectedCard && (
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
-                  <div className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest mb-1.5">Cloning card</div>
-                  <div className="text-[15px] font-medium text-zinc-200 truncate">{selectedCard.name}</div>
-                  <div className="text-[13px] text-zinc-400 truncate mt-0.5">in {listNameById.get(selectedCard.idList) ?? "list"}</div>
+                <div className="bg-[#22272b] border border-[#3B444C] rounded-xl p-4">
+                  <div className="text-[11px] font-medium text-[#738496] uppercase tracking-widest mb-1.5">Cloning card</div>
+                  <div className="text-[15px] font-medium text-[#B6C2CF] truncate">{selectedCard.name}</div>
+                  <div className="text-[13px] text-[#8C9BAB] truncate mt-0.5">in {listNameById.get(selectedCard.idList) ?? "list"}</div>
                 </div>
               )}
 
@@ -291,32 +291,32 @@ function App() {
 
               {/* LIST context: show which list (read-only info) */}
               {ctx === "list" && (
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
-                  <div className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest mb-1.5">List</div>
-                  <div className="text-[15px] font-medium text-zinc-200 truncate">{listNameById.get(selectedListId) ?? "Selected list"}</div>
+                <div className="bg-[#22272b] border border-[#3B444C] rounded-xl p-4">
+                  <div className="text-[11px] font-medium text-[#738496] uppercase tracking-widest mb-1.5">List</div>
+                  <div className="text-[15px] font-medium text-[#B6C2CF] truncate">{listNameById.get(selectedListId) ?? "Selected list"}</div>
                 </div>
               )}
 
               {/* BOARD & LIST: Card selector (filtered by selected list) */}
               {(ctx === "board" || ctx === "list") && (
                 <div className="relative">
-                  <label className="text-[13px] text-zinc-400 mb-1.5 block">Select a card</label>
+                  <label className="text-[13px] text-[#8C9BAB] mb-1.5 block">Select a card</label>
                   <div className="relative">
                     <input type="text" value={cardQuery} placeholder="Search"
                       onChange={(e) => { setCardQuery(e.target.value); setCardMenuOpen(true); }}
                       onFocus={() => setCardMenuOpen(true)}
-                      className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 pr-10 text-[14px] text-zinc-200 placeholder-zinc-500 outline-none hover:border-zinc-700 focus:border-zinc-700 transition" />
-                    <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+                      className="w-full bg-[#22272b] border border-[#3B444C] rounded-xl px-4 py-3 pr-10 text-[14px] text-[#B6C2CF] placeholder-zinc-500 outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition" />
+                    <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#738496] pointer-events-none" />
                   </div>
                   {cardMenuOpen && (
-                    <div className="absolute z-50 mt-1 w-full max-h-56 overflow-auto bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl py-1">
-                      {filteredCards.length === 0 ? <div className="px-4 py-3 text-[13px] text-zinc-400">{selectedListId ? "No cards in this list" : "No cards found"}</div> : (
+                    <div className="absolute z-50 mt-1 w-full max-h-56 overflow-auto bg-[#2C333A] border border-[#2C333A] rounded-xl shadow-2xl py-1">
+                      {filteredCards.length === 0 ? <div className="px-4 py-3 text-[13px] text-[#8C9BAB]">{selectedListId ? "No cards in this list" : "No cards found"}</div> : (
                         filteredCards.map((c) => (
                           <button key={c.id} type="button"
                             onClick={() => { setSelectedCardId(c.id); setCardQuery(c.name); setCardMenuOpen(false); const ln = listNameById.get(c.idList); if (ln) setTargetListName(ln); }}
-                            className={`w-full text-left px-4 py-2.5 transition hover:bg-zinc-700/50 ${c.id === selectedCardId ? "bg-zinc-700/30" : ""}`}>
-                            <div className="text-[14px] text-zinc-200 truncate">{c.name}</div>
-                            <div className="text-[12px] text-zinc-400 truncate mt-0.5">{listNameById.get(c.idList) ?? ""}</div>
+                            className={`w-full text-left px-4 py-2.5 transition hover:bg-[#3B444C] ${c.id === selectedCardId ? "bg-zinc-700/30" : ""}`}>
+                            <div className="text-[14px] text-[#B6C2CF] truncate">{c.name}</div>
+                            <div className="text-[12px] text-[#8C9BAB] truncate mt-0.5">{listNameById.get(c.idList) ?? ""}</div>
                           </button>
                         ))
                       )}
@@ -329,18 +329,18 @@ function App() {
               <SelectField label="Repeats" value={repeat} options={repeatOptions} onChange={setRepeat} />
               
               <div>
-                <label className="text-[13px] text-zinc-400 mb-1.5 block">At</label>
+                <label className="text-[13px] text-[#8C9BAB] mb-1.5 block">At</label>
                 <div className="relative">
-                  <input type="time" value={atTime} onChange={(e) => setAtTime(e.target.value)} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-[14px] text-zinc-200 outline-none hover:border-zinc-700 focus:border-zinc-700 transition [color-scheme:dark]" />
+                  <input type="time" value={atTime} onChange={(e) => setAtTime(e.target.value)} className="w-full bg-[#22272b] border border-[#3B444C] rounded-xl px-4 py-3 text-[14px] text-[#B6C2CF] outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition [color-scheme:dark]" />
                 </div>
               </div>
 
               {repeat === "Weekly" && (
                 <div>
-                  <label className="text-[13px] text-zinc-400 mb-1.5 block">On</label>
+                  <label className="text-[13px] text-[#8C9BAB] mb-1.5 block">On</label>
                   <div className="relative">
-                    <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
-                    <select value={weekday} onChange={(e) => setWeekday(e.target.value)} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 pl-11 text-[14px] text-zinc-200 outline-none hover:border-zinc-700 focus:border-zinc-700 transition appearance-none cursor-pointer">
+                    <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#738496] pointer-events-none" />
+                    <select value={weekday} onChange={(e) => setWeekday(e.target.value)} className="w-full bg-[#22272b] border border-[#3B444C] rounded-xl px-4 py-3 pl-11 text-[14px] text-[#B6C2CF] outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition appearance-none cursor-pointer">
                       {weekdayOptions.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   </div>
@@ -348,10 +348,10 @@ function App() {
               )}
               {repeat === "Monthly" && (
                 <div>
-                  <label className="text-[13px] text-zinc-400 mb-1.5 block">On</label>
+                  <label className="text-[13px] text-[#8C9BAB] mb-1.5 block">On</label>
                   <div className="relative">
-                    <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
-                    <select value={dayOfMonth} onChange={(e) => setDayOfMonth(e.target.value)} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 pl-11 text-[14px] text-zinc-200 outline-none hover:border-zinc-700 focus:border-zinc-700 transition appearance-none cursor-pointer">
+                    <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#738496] pointer-events-none" />
+                    <select value={dayOfMonth} onChange={(e) => setDayOfMonth(e.target.value)} className="w-full bg-[#22272b] border border-[#3B444C] rounded-xl px-4 py-3 pl-11 text-[14px] text-[#B6C2CF] outline-none hover:border-[#2C333A] focus:border-[#2C333A] transition appearance-none cursor-pointer">
                       {dayOfMonthOptions.map(o => <option key={o} value={o}>Day {o}</option>)}
                     </select>
                   </div>
@@ -368,7 +368,7 @@ function App() {
               )}
 
               <div className="flex justify-end mt-2">
-                <button type="button" onClick={onSave} disabled={saving} className="bg-[#2B2D31] hover:bg-[#35373C] border border-[#3B3D41] text-zinc-200 text-[14px] font-medium px-6 py-2.5 rounded-xl transition disabled:opacity-50 min-w-[100px]">
+                <button type="button" onClick={onSave} disabled={saving} className="bg-[#2B2D31] hover:bg-[#35373C] border border-[#3B3D41] text-[#B6C2CF] text-[14px] font-medium px-6 py-2.5 rounded-xl transition disabled:opacity-50 min-w-[100px]">
                   {saving ? "Saving…" : "Save"}
                 </button>
               </div>
