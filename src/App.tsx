@@ -77,15 +77,21 @@ function App() {
       try {
         const urlCtx = new URLSearchParams(window.location.search).get("ctx");
         let ctxArg = null;
-        let pf: any = {};
         try { if (typeof t.arg === "function") ctxArg = t.arg("context"); } catch {}
-        try { if (typeof t.arg === "function") pf = t.arg("prefetch") || {}; } catch {}
         
-        let mem = pf.member ?? null;
-        let bLists = pf.lists ?? [];
-        let bCards = pf.cards ?? [];
-        const curCard = pf.currentCard ?? null;
-        const curList = pf.currentList ?? null;
+        const [m, l, c, cc, cl] = await Promise.all([
+          t.member("all").catch((e: any) => { setDebugError(prev => prev + " memErr:" + e?.message); return null; }), 
+          t.lists("all").catch((e: any) => { setDebugError(prev => prev + " listErr:" + e?.message); return []; }), 
+          t.cards("all").catch((e: any) => { setDebugError(prev => prev + " cardErr:" + e?.message); return []; }),
+          t.card("all").catch(() => null),
+          t.list("all").catch(() => null)
+        ]);
+        
+        let mem = m;
+        let bLists = l;
+        let bCards = c;
+        const curCard = cc;
+        const curList = cl;
 
         // Detect context: URL param > arg > infer from data
         let context: Context = "board";
@@ -101,16 +107,6 @@ function App() {
         
         if (!cancelled) {
           setCtx(context);
-        }
-
-        // Fallback fetches
-        if (!mem || !bLists?.length || !bCards?.length) {
-          const [m, l, c] = await Promise.all([
-            t.member("all").catch((e: any) => { setDebugError(prev => prev + " memErr:" + e?.message); return null; }), 
-            t.lists("all").catch((e: any) => { setDebugError(prev => prev + " listErr:" + e?.message); return []; }), 
-            t.cards("all").catch((e: any) => { setDebugError(prev => prev + " cardErr:" + e?.message); return []; })
-          ]);
-          mem = mem ?? m; bLists = bLists?.length ? bLists : l; bCards = bCards?.length ? bCards : c;
         }
         if (!mem?.username || !bLists?.length || !bCards?.length) {
           try {
