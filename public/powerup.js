@@ -8,7 +8,7 @@ var safe = function (promise, fallback) {
  */
 function openPopup(t, context) {
   return t.popup({
-    url: "./index.html?ctx=" + context + "&v=" + Date.now(),
+    url: t.signUrl("./?ctx=" + context + "&v=" + Date.now()),
     height: 400,
     accentColor: "#2b2c2f",
     args: {
@@ -59,7 +59,7 @@ window.TrelloPowerUp.initialize({
         icon: 'https://cdn-icons-png.flaticon.com/512/2889/2889312.png',
         content: {
           type: 'iframe',
-          url: t.signUrl('./index.html?ctx=cardback&cardId=' + card.id),
+          url: t.signUrl('./?ctx=cardback&cardId=' + card.id + '&v=' + Date.now()),
           height: 80
         }
       };
