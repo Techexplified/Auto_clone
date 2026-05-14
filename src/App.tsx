@@ -66,7 +66,7 @@ function App() {
   // Prevent TS build errors while debug UI is commented out
   void debugError;
   void debugData;
-  const TRELLO_APP_KEY = "e533ed095b0c07ac12a6f8d2aef8a3dd";
+  const TRELLO_APP_KEY = import.meta.env.VITE_TRELLO_APP_KEY;
 
 
   useEffect(() => { let a = 0; const id = setInterval(() => { a++; try { const c = window.TrelloPowerUp?.iframe?.({ appKey: TRELLO_APP_KEY, appName: 'Auto Clone' }); if (c) { setT(c); clearInterval(id); } } catch {} if (a >= 30) clearInterval(id); }, 120); return () => clearInterval(id); }, []);
@@ -219,7 +219,7 @@ function App() {
         if (!isDue(updated[i])) continue;
         try {
           const token = await api.getToken();
-          const appKey = "e533ed095b0c07ac12a6f8d2aef8a3dd";
+          const appKey = import.meta.env.VITE_TRELLO_APP_KEY;
           const posStr = updated[i].pos === "Top" ? "top" : "bottom";
           const res = await fetch(`https://api.trello.com/1/cards?key=${appKey}&token=${token}&idList=${updated[i].listId}&idCardSource=${updated[i].srcId}&pos=${posStr}&keepFromSource=all`, { method: "POST" });
           if (res.ok) {
@@ -263,7 +263,7 @@ function App() {
         const api = await t.getRestApi(); 
         if (!(await api.isAuthorized())) await api.authorize({ scope: "read,write,account", expiration: "never" });
         const token = await api.getToken();
-        const appKey = "e533ed095b0c07ac12a6f8d2aef8a3dd";
+        const appKey = import.meta.env.VITE_TRELLO_APP_KEY;
         const posStr = position === "Top" ? "top" : "bottom";
         
         const res = await fetch(`https://api.trello.com/1/cards?key=${appKey}&token=${token}&idList=${actualTargetListId}&idCardSource=${selectedCard.id}&pos=${posStr}&keepFromSource=all`, { method: 'POST' });
